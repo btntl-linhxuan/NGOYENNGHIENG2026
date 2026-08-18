@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khoảnh Khắc - NGỜ YÊN NGHIÊNG</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../images/icon.png">
+    <link rel="apple-touch-icon" href="../images/icon.png">
+    <link rel="manifest" href="../manifest.json">
+
+    <meta name="theme-color" content="#123b8d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BTN LX">
+
+    <style>
+        /* 🟢 BỐ CỤC PINTEREST/WATERFALL: Loại bỏ hoàn toàn khoảng trống rỗng giữa các bài đăng */
+        .posts-grid {
+            display: block !important;
+            column-count: 3;
+            column-gap: 20px;
+        }
+
+        .post-card, .skeleton-card {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            -webkit-column-break-inside: avoid;
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+
+        @media (max-width: 900px) {
+            .posts-grid {
+                column-count: 2;
+                column-gap: 15px;
+            }
+            .post-card, .skeleton-card {
+                margin-bottom: 15px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .posts-grid {
+                column-count: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="../images/logo.png" alt="NGỜ YÊN NGHIÊNG">
+                </a>
+            </div>
+
+            <button class="menu-toggle" type="button" aria-label="Toggle Navigation">☰</button>
+
+            <div class="menu">
+                <a href="../index.html">Home</a>
+                <a href="schedule.html">Lịch trình</a>
+                <a href="groups.html">Danh sách nhóm</a>
+                <a href="room.html">Sắp xếp phòng</a>
+                <a href="confession.html">Confession</a>
+                <a href="gallery.html" class="active">Khoảnh khắc</a>
+                <a href="btc.html">BTC</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="page-title glass text-center">
+            <span class="page-title-badge">✨ MEMORIES GALLERY</span>
+            <h1>Khoảnh khắc Kỷ niệm 📸</h1>
+            <p>Lưu giữ từng nụ cười và hành trình đáng nhớ tại trại.</p>
+            <div id="postCount" class="gallery-count-pill" style="margin-top:15px;">
+                📸 Đang tải dữ liệu...
+            </div>
+        </section>
+
+        <!-- Thanh lọc theo Ngày -->
+        <div class="filter-hashtags" id="filterContainer">
+            <button class="tag-btn active" data-filter="all">Tất cả</button>
+        </div>
+
+        <section class="gallery-feed">
+            <div id="posts" class="posts-grid">
+                <!-- Skeleton Loading Cards -->
+                <div class="skeleton-card">
+                    <div class="skeleton-header">
+                        <div class="skeleton-avatar shimmer"></div>
+                        <div class="skeleton-info">
+                            <div class="skeleton-text-lg shimmer"></div>
+                            <div class="skeleton-text-sm shimmer"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-media shimmer"></div>
+                    <div class="skeleton-caption shimmer"></div>
+                </div>
+
+                <div class="skeleton-card">
+                    <div class="skeleton-header">
+                        <div class="skeleton-avatar shimmer"></div>
+                        <div class="skeleton-info">
+                            <div class="skeleton-text-lg shimmer"></div>
+                            <div class="skeleton-text-sm shimmer"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-media shimmer" style="height:260px;"></div>
+                    <div class="skeleton-caption shimmer"></div>
+                </div>
+            </div>
+
+            <!-- Nút Phân Trang (Xem thêm) -->
+            <div id="loadMoreWrap" style="text-align: center; margin: 30px 0; display: none;">
+                <button id="loadMoreBtn" class="action-btn" onclick="handleLoadMore()" style="padding: 12px 28px; font-size: 1rem; cursor: pointer;">
+                    📥 Xem thêm khoảnh khắc
+                </button>
+            </div>
+        </section>
+
+        <!-- Nút gửi ảnh floating -->
+        <a href="https://forms.gle/Zti5JjRxk8KxdCaSA" target="_blank" rel="noopener" class="floating-upload-btn"
+            title="Đăng ảnh ngay">
+            <span class="fab-icon">📤</span>
+            <span class="fab-text">Gửi ảnh kỷ niệm</span>
+        </a>
+    </main>
+
+    <!-- Modal Phóng To Ảnh -->
+    <div id="imageModal" class="image-modal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImg" alt="Xem phóng to">
+    </div>
+
+    <!-- Toast thông báo -->
+    <div id="toast" class="toast-msg">🔗 Đã sao chép liên kết bài viết!</div>
+
+    <footer>
+        <p>Designed & Developed by Diệp Đoan Trinh</p>
+    </footer>
+
+    <script>
+        // 1. Quản lý Toggle Navigation Mobile
+        const toggle = document.querySelector(".menu-toggle");
+        const menu = document.querySelector(".menu");
+
+        if (toggle && menu) {
+            toggle.addEventListener("click", () => {
+                menu.classList.toggle("show");
+                toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                    menu.classList.remove("show");
+                    toggle.textContent = "☰";
+                }
+            });
+        }
+
+        // 2. Cấu hình API & Biến Quản lý
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwK9Fs_PEFXXcHyH7h1DPxjNuKlIXnaPBjZdlZIiAeEd_ydjKB-yz-0f224P62ET1S6Lw/exec";
+        const avatars = ["🏕️", "🔥", "🌻", "🌟", "📸", "🎒", "⛺"];
+
+        let allApprovedPosts = []; 
+        let filteredPosts = [];    
+        let currentPage = 1;
+        const POSTS_PER_PAGE = 6;  
+        let currentFilter = "all";
+
+        function getRandomAvatar(name) {
+            let charCode = 0;
+            const str = String(name || "Trại sinh");
+            for (let i = 0; i < str.length; i++) charCode += str.charCodeAt(i);
+            return avatars[charCode % avatars.length];
+        }
+
+        // Chuẩn hóa dữ liệu ảnh
+        function getPostImages(post) {
+            let raw = post.images || post.image || post.img || post.photos || post.photo;
+            if (!raw) return [];
+
+            if (Array.isArray(raw)) {
+                return raw.map(url => String(url).trim()).filter(url => url.length > 0);
+            }
+
+            if (typeof raw === 'string') {
+                raw = raw.trim();
+                if (!raw) return [];
+
+                if (raw.startsWith('[') && raw.endsWith(']')) {
+                    try {
+                        const parsed = JSON.parse(raw);
+                        if (Array.isArray(parsed)) {
+                            return parsed.map(url => String(url).trim()).filter(url => url.length > 0);
+                        }
+                    } catch (e) {}
+                }
+
+                if (raw.includes(',') || raw.includes('\n')) {
+                    return raw.split(/[\,\n]+/).map(url => url.trim()).filter(url => url.length > 0);
+                }
+
+                if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('data:')) {
+                    return [raw];
+                }
+            }
+
+            return [];
+        }
+
+        // Bộ lọc bài đã duyệt
+        function isPostApproved(item) {
+            const statusKeys = ['status', 'trangThai', 'Trạng thái', 'Trạng Thái', 'approved', 'Approved', 'Duyệt', 'duyet', 'Status', 'isApproved'];
+            let rawStatus = undefined;
+
+            for (const key of statusKeys) {
+                if (item[key] !== undefined && item[key] !== null) {
+                    rawStatus = item[key];
+                    break;
+                }
+            }
+
+            if (rawStatus !== undefined) {
+                if (typeof rawStatus === 'boolean') return rawStatus;
+                
+                const st = String(rawStatus).toLowerCase().trim();
+                
+                if (st === "" || st === "chờ duyệt" || st === "cho duyet" || st === "pending" || st === "từ chối" || st === "tu choi" || st === "rejected" || st === "0" || st === "false" || st === "ẩn" || st === "hidden") {
+                    return false;
+                }
+                
+                if (st === "đã duyệt" || st === "da duyet" || st === "approved" || st === "active" || st === "duyệt" || st === "duyet" || st === "1" || st === "true") {
+                    return true;
+                }
+
+                if ((st.includes("duyệt") || st.includes("approved")) && !st.includes("chờ")) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        // Định dạng và đọc Ngày Tháng an toàn
+        function parsePostDate(timeStr) {
+            if (!timeStr) return null;
+            let d = new Date(timeStr);
+
+            if (isNaN(d.getTime()) && typeof timeStr === 'string') {
+                const match = timeStr.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-]?(\d{4})?\s*(\d{1,2})?:?(\d{1,2})?/);
+                if (match) {
+                    const day = match[1].padStart(2, '0');
+                    const month = match[2].padStart(2, '0');
+                    const year = match[3] || new Date().getFullYear();
+                    const hours = match[4] ? match[4].padStart(2, '0') : '00';
+                    const mins = match[5] ? match[5].padStart(2, '0') : '00';
+                    d = new Date(`${year}-${month}-${day}T${hours}:${mins}:00`);
+                }
+            }
+
+            if (isNaN(d.getTime())) return null;
+
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const mins = String(d.getMinutes()).padStart(2, '0');
+
+            const weekdays = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+            const weekday = weekdays[d.getDay()];
+
+            return {
+                filterValue: `${day}/${month}`,
+                label: `${weekday} ${day}/${month}`,
+                displayTime: `${hours}:${mins}, ${day}/${month}`,
+                timestamp: d.getTime()
+            };
+        }
+
+        // Dynamic Filter Buttons
+        function renderDynamicFilterButtons(postsData) {
+            const container = document.getElementById("filterContainer");
+            if (!container) return;
+
+            const dateMap = new Map();
+            postsData.forEach(post => {
+                const dateInfo = parsePostDate(post.time);
+                if (dateInfo && !dateMap.has(dateInfo.filterValue)) {
+                    dateMap.set(dateInfo.filterValue, dateInfo);
+                }
+            });
+
+            const sortedDates = Array.from(dateMap.values()).sort((a, b) => b.timestamp - a.timestamp);
+
+            let buttonsHTML = `<button class="tag-btn active" data-filter="all">Tất cả</button>`;
+            sortedDates.forEach(d => {
+                buttonsHTML += `<button class="tag-btn" data-filter="${d.filterValue}">${d.label}</button>`;
+            });
+
+            container.innerHTML = buttonsHTML;
+
+            container.querySelectorAll(".tag-btn").forEach(btn => {
+                btn.onclick = () => {
+                    container.querySelectorAll(".tag-btn").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    currentFilter = btn.getAttribute("data-filter");
+                    applyFilterAndRender();
+                };
+            });
+        }
+
+        // 3. Tải bài viết & Sắp xếp từ MỚI NHẤT ➔ CŨ NHẤT
+        function loadPosts() {
+            fetch(`${scriptURL}?action=gallery`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!Array.isArray(data) || data.length === 0) {
+                        document.getElementById("posts").innerHTML = `<p class="text-center" style="width:100%; color:#fff;">Chưa có khoảnh khắc nào!</p>`;
+                        document.getElementById("postCount").innerHTML = `✨ <strong>0</strong> khoảnh khắc`;
+                        return;
+                    }
+
+                    // 1. Chỉ giữ bài đã duyệt
+                    allApprovedPosts = data.filter(isPostApproved);
+
+                    // 🟢 2. SẮP XẾP CHÍNH XÁC TỪ MỚI NHẤT -> CŨ NHẤT Theo Timestamp
+                    allApprovedPosts.sort((a, b) => {
+                        const dateA = parsePostDate(a.time);
+                        const dateB = parsePostDate(b.time);
+                        const tA = dateA ? dateA.timestamp : 0;
+                        const tB = dateB ? dateB.timestamp : 0;
+                        return tB - tA; // Timestamp lớn hơn (mới hơn) đứng trước
+                    });
+
+                    renderDynamicFilterButtons(allApprovedPosts);
+
+                    currentFilter = "all";
+                    applyFilterAndRender();
+                })
+                .catch(err => {
+                    console.error("Lỗi tải Gallery:", err);
+                    document.getElementById("posts").innerHTML = `<p class="error-msg" style="color:#ff6b6b; text-align: center; width: 100%;">⚠️ Không thể tải khoảnh khắc. Vui lòng kiểm tra kết nối mạng!</p>`;
+                });
+        }
+
+        // 4. Lọc bài đăng
+        function applyFilterAndRender() {
+            if (currentFilter === "all") {
+                filteredPosts = [...allApprovedPosts];
+            } else {
+                filteredPosts = allApprovedPosts.filter(post => {
+                    const dateInfo = parsePostDate(post.time);
+                    return dateInfo && dateInfo.filterValue === currentFilter;
+                });
+            }
+
+            currentPage = 1;
+            renderGallery();
+        }
+
+        // 5. Render Thẻ Bài Đăng
+        function renderGallery() {
+            const postsContainer = document.getElementById("posts");
+            const likedPosts = JSON.parse(localStorage.getItem("liked_gallery_posts") || "[]");
+
+            document.getElementById("postCount").innerHTML = `✨ <strong>${filteredPosts.length}</strong> khoảnh khắc đã chia sẻ`;
+
+            if (filteredPosts.length === 0) {
+                postsContainer.innerHTML = `<p class="text-center" style="width:100%; color:#fff;">Chưa có bài viết nào ở danh mục này.</p>`;
+                document.getElementById("loadMoreWrap").style.display = "none";
+                return;
+            }
+
+            const visiblePosts = filteredPosts.slice(0, currentPage * POSTS_PER_PAGE);
+
+            let htmlContent = "";
+            visiblePosts.forEach((post, idx) => {
+                const postId = post.id || `post-${idx}`;
+                const isLiked = likedPosts.includes(postId);
+                const dateInfo = parsePostDate(post.time);
+                const displayTime = dateInfo ? dateInfo.displayTime : "Mới đây";
+
+                const imageList = getPostImages(post);
+
+                let imageHTML = "";
+                if (imageList.length === 0) {
+                    imageHTML = "";
+                } else if (imageList.length === 1) {
+                    imageHTML = `
+                        <div class="post-media" data-post-id="${postId}">
+                            <img src="${imageList[0]}" class="post-image zoomable" loading="lazy" alt="Ảnh kỷ niệm">
+                        </div>
+                    `;
+                } else {
+                    const safeImages = JSON.stringify(imageList).replace(/'/g, "&apos;");
+                    imageHTML = `
+                        <div class="post-media slider" data-post-id="${postId}" data-images='${safeImages}'>
+                            <button class="slider-btn prev" type="button">‹</button>
+                            <img src="${imageList[0]}" class="slider-image zoomable" loading="lazy" alt="Ảnh kỷ niệm">
+                            <button class="slider-btn next" type="button">›</button>
+                            <div class="slider-counter">1 / ${imageList.length} 📸</div>
+                        </div>
+                    `;
+                }
+
+                const avatarEmoji = getRandomAvatar(post.name);
+                const initialLikes = post.likes || 0;
+
+                htmlContent += `
+                    <article class="post-card glass" data-id="${postId}">
+                        <header class="post-card-header">
+                            <div class="user-avatar-wrap">
+                                <div class="user-avatar">${avatarEmoji}</div>
+                            </div>
+                            <div class="user-info">
+                                <strong class="user-name">${post.name || "Trại sinh ẩn danh"}</strong>
+                                <span class="post-time">🕒 ${displayTime}</span>
+                            </div>
+                        </header>
+
+                        ${imageHTML}
+
+                        <div class="post-card-body">
+                            <p class="post-caption">${post.caption || ""}</p>
+                        </div>
+
+                        <footer class="post-card-footer">
+                            <div class="action-btns-group">
+                                <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(this, '${postId}')">
+                                    <span class="heart-icon">❤️</span> 
+                                    <span class="like-count" data-count="${initialLikes}">${initialLikes}</span>
+                                </button>
+                            </div>
+                        </footer>
+                    </article>
+                `;
+            });
+
+            postsContainer.innerHTML = htmlContent;
+
+            initSliders();
+            initDoubleTapToLike();
+            updateLoadMoreBtn();
+        }
+
+        // 6. Nút Load More
+        function updateLoadMoreBtn() {
+            const loadMoreWrap = document.getElementById("loadMoreWrap");
+            if (!loadMoreWrap) return;
+
+            if (currentPage * POSTS_PER_PAGE >= filteredPosts.length) {
+                loadMoreWrap.style.display = "none";
+            } else {
+                loadMoreWrap.style.display = "block";
+            }
+        }
+
+        function handleLoadMore() {
+            currentPage++;
+            renderGallery();
+        }
+
+        // 7. Double tap to Like
+        function initDoubleTapToLike() {
+            document.querySelectorAll(".post-media").forEach(mediaEl => {
+                let lastTap = 0;
+                mediaEl.addEventListener("click", function (e) {
+                    if (e.target.classList.contains("slider-btn")) return;
+
+                    const currentTime = new Date().getTime();
+                    const tapLength = currentTime - lastTap;
+
+                    if (tapLength < 300 && tapLength > 0) {
+                        createHeartPop(this);
+                        const card = this.closest(".post-card");
+                        const likeBtn = card.querySelector(".like-btn");
+                        if (likeBtn && !likeBtn.classList.contains("liked")) {
+                            toggleLike(likeBtn, card.dataset.id);
+                        }
+                    }
+                    lastTap = currentTime;
+                });
+            });
+        }
+
+        function createHeartPop(container) {
+            const heart = document.createElement("div");
+            heart.className = "heart-overlay";
+            heart.innerHTML = "💖";
+            container.appendChild(heart);
+
+            setTimeout(() => { heart.remove(); }, 800);
+        }
+
+        // 8. Sliders
+        function initSliders() {
+            document.querySelectorAll(".slider").forEach(slider => {
+                if (!slider.dataset.images) return;
+                const images = JSON.parse(slider.dataset.images);
+                let index = 0;
+                const img = slider.querySelector(".slider-image");
+                const counter = slider.querySelector(".slider-counter");
+
+                const updateSlider = () => {
+                    img.src = images[index];
+                    counter.textContent = `${index + 1} / ${images.length} 📸`;
+                };
+
+                const nextBtn = slider.querySelector(".next");
+                const prevBtn = slider.querySelector(".prev");
+
+                if (nextBtn) {
+                    nextBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        index = (index + 1) % images.length;
+                        updateSlider();
+                    };
+                }
+
+                if (prevBtn) {
+                    prevBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        index = (index - 1 + images.length) % images.length;
+                        updateSlider();
+                    };
+                }
+
+                let touchStartX = 0;
+                let touchStartY = 0;
+
+                slider.addEventListener("touchstart", (e) => {
+                    touchStartX = e.changedTouches[0].clientX;
+                    touchStartY = e.changedTouches[0].clientY;
+                }, { passive: true });
+
+                slider.addEventListener("touchend", (e) => {
+                    const touchEndX = e.changedTouches[0].clientX;
+                    const touchEndY = e.changedTouches[0].clientY;
+
+                    const diffX = touchEndX - touchStartX;
+                    const diffY = touchEndY - touchStartY;
+
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+                        if (diffX < 0) {
+                            index = (index + 1) % images.length;
+                        } else {
+                            index = (index - 1 + images.length) % images.length;
+                        }
+                        updateSlider();
+                    }
+                }, { passive: true });
+            });
+        }
+
+        // 9. Lightbox Modal
+        document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("modalImg");
+            const closeBtn = document.querySelector(".close-modal");
+            const postsElem = document.getElementById("posts");
+
+            if (postsElem) {
+                postsElem.addEventListener("click", (e) => {
+                    if (e.target.classList.contains("zoomable") && modal && modalImg) {
+                        modal.style.display = "flex";
+                        modalImg.src = e.target.src;
+                    }
+                });
+            }
+
+            if (closeBtn) closeBtn.onclick = () => modal.style.display = "none";
+            if (modal) {
+                modal.onclick = (e) => {
+                    if (e.target === modal) modal.style.display = "none";
+                };
+            }
+
+            loadPosts();
+        });
+
+        // 10. Toggle Like
+        function toggleLike(btn, postId) {
+            btn.classList.toggle("liked");
+            const countSpan = btn.querySelector(".like-count");
+            let currentLikes = parseInt(countSpan.dataset.count || 0);
+
+            let likedPosts = JSON.parse(localStorage.getItem("liked_gallery_posts") || "[]");
+            let actionType = "like";
+
+            if (btn.classList.contains("liked")) {
+                currentLikes += 1;
+                if (!likedPosts.includes(postId)) likedPosts.push(postId);
+                showToast("❤️ Đã thả tim bài viết!");
+                actionType = "like";
+            } else {
+                currentLikes = Math.max(0, currentLikes - 1);
+                likedPosts = likedPosts.filter(id => id !== postId);
+                actionType = "unlike";
+            }
+
+            countSpan.dataset.count = currentLikes;
+            countSpan.textContent = currentLikes;
+            localStorage.setItem("liked_gallery_posts", JSON.stringify(likedPosts));
+
+            fetch(scriptURL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({
+                    action: "like_gallery",
+                    postId: postId,
+                    type: actionType
+                })
+            }).catch(err => console.log("Lỗi lưu tim:", err));
+        }
+
+        // 11. Toast
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            if (!toast) return;
+            toast.textContent = message;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2500);
+        }
+
+        // 12. SW
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(reg => console.log('SW đăng ký thành công!'))
+                    .catch(err => console.log('Lỗi đăng ký SW:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

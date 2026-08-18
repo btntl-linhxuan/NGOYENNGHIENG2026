@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ban Tổ Chức - NGỜ YÊN NGHIÊNG</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../images/icon.png">
+    <link rel="apple-touch-icon" href="../images/icon.png">
+    <link rel="manifest" href="../manifest.json">
+
+    <meta name="theme-color" content="#123b8d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BTN LX">
+
+    <style>
+        /* ==========================================
+           BẢNG MÀU & STYLE RIÊNG TRANG BTC (NÂNG CẤP)
+           ========================================== */
+        .btc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 22px;
+            margin-top: 30px;
+        }
+
+        /* Thẻ Thành Viên Chung */
+        .member-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 24px 20px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .member-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+        }
+
+        /* 🌟 NỔI BẬT: 4 VỊ TRÍ BTC CHÍNH */
+        .member-card.highlight-card {
+            border: 2px solid #fbc02d !important; /* Viền Vàng Kim */
+            background: linear-gradient(180deg, #ffffff 0%, #fffdf0 100%) !important; /* Nền ánh vàng nhẹ */
+            box-shadow: 0 8px 24px rgba(251, 192, 45, 0.18) !important;
+        }
+
+        /* Badge Vai Trò Của 4 BTC Chính (Nổi bật) */
+        .member-card.highlight-card .role-badge {
+            background: linear-gradient(135deg, #f57f17, #fbc02d);
+            color: #ffffff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            box-shadow: 0 3px 10px rgba(245, 127, 23, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 🛠️ FIX LỖI: Badge Ban Điều Hành (Rõ chữ, không bị chìm) */
+        .role-badge.sub {
+            background: #e8f5e9 !important;
+            color: #1b5e20 !important;
+            border: 1px solid #c8e6c9;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Avatar Chung */
+        .member-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+            border: 3px solid #ffffff;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 800;
+            user-select: none;
+        }
+
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 🎨 Dải màu Gradient riêng cho từng chữ cái avatar */
+        .avatar-v { background: linear-gradient(135deg, #1e88e5, #1565c0); } /* Vy - Xanh Dương */
+        .avatar-t { background: linear-gradient(135deg, #8e24aa, #6a1b9a); } /* Trung - Tím */
+        .avatar-l { background: linear-gradient(135deg, #fb8c00, #e65100); } /* Luyến - Cam */
+        .avatar-bdh { background: linear-gradient(135deg, #2e7d32, #1b5e20); } /* Trinh - Xanh Lá */
+
+        /* Tên Thành Viên */
+        .member-card h3 {
+            font-size: 1.15rem;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        /* Khung Nút Bấm Liên Hệ */
+        .member-buttons {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .member-buttons a {
+            flex: 1;
+            padding: 9px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        /* Nút Gọi */
+        .call-btn {
+            background: #e8f5e9;
+            color: #2d5a27 !important;
+            border: 1px solid #c8e6c9;
+        }
+
+        .call-btn:hover {
+            background: #2d5a27;
+            color: #ffffff !important;
+        }
+
+        /* Nút Facebook */
+        .facebook-btn {
+            background: #e7f0ff;
+            color: #1877f2 !important;
+            border: 1px solid #b3d1ff;
+        }
+
+        .facebook-btn:hover {
+            background: #1877f2;
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="../images/logo.png" alt="NGỜ YÊN NGHIÊNG">
+                </a>
+            </div>
+
+            <button class="menu-toggle" aria-label="Toggle Navigation">☰</button>
+
+            <div class="menu">
+                <a href="../index.html">Home</a>
+                <a href="schedule.html">Lịch trình</a>
+                <a href="groups.html">Danh sách nhóm</a>
+                <a href="room.html">Sắp xếp phòng</a>
+                <a href="confession.html">Confession</a>
+                <a href="gallery.html">Khoảnh khắc</a>
+                <a href="btc.html" class="active">BTC</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="page-title glass text-center">
+            <span class="page-title-badge">👥 ĐỘI NGŨ BTC</span>
+            <h1>Ban Tổ Chức 🏕️</h1>
+            <p>🤝 Những người luôn sẵn sàng hỗ trợ bạn trong suốt kỳ trại</p>
+        </section>
+
+        <!-- Danh sách Ban Tổ Chức -->
+        <section class="members btc-grid">
+            
+            <!-- 1. Trưởng Trại -->
+            <div class="member-card highlight-card">
+                <div class="role-badge">👑 Trưởng trại</div>
+                <div class="member-avatar avatar-v">T</div>
+                <h3>Huỳnh Nhật Tín</h3>
+                <div class="member-buttons">
+                    <a class="call-btn" href="tel:0384628883" onclick="return confirm('Gọi cho Huỳnh Nhật Tín?')">📞 Gọi ngay</a>
+                    <a class="facebook-btn" href="https://www.facebook.com/tin.huynhnhat.90" target="_blank" rel="noopener">🌐 Facebook</a>
+                </div>
+            </div>
+
+            <!-- 2. Phó Trại -->
+            <div class="member-card highlight-card">
+                <div class="role-badge">⭐ Phó trại</div>
+                <div class="member-avatar avatar-v">V</div>
+                <h3>Nguyễn Ngọc Tường Vy</h3>
+                <div class="member-buttons">
+                    <a class="call-btn" href="tel:0337631143" onclick="return confirm('Gọi cho Nguyễn Ngọc Tường Vy?')">📞 Gọi ngay</a>
+                    <a class="facebook-btn" href="https://www.facebook.com/vy.nguyen.122312" target="_blank" rel="noopener">🌐 Facebook</a>
+                </div>
+            </div>
+
+            <!-- 3. Thư Ký Trại -->
+            <div class="member-card highlight-card">
+                <div class="role-badge">📝 Thư ký trại</div>
+                <div class="member-avatar avatar-t">T</div>
+                <h3>Võ Nguyễn Minh Trung</h3>
+                <div class="member-buttons">
+                    <a class="call-btn" href="tel:0704768756" onclick="return confirm('Gọi cho Võ Nguyễn Minh Trung?')">📞 Gọi ngay</a>
+                    <a class="facebook-btn" href="https://www.facebook.com/vnmtrung" target="_blank" rel="noopener">🌐 Facebook</a>
+                </div>
+            </div>
+
+            <!-- 4. Thủ Quỹ Trại -->
+            <div class="member-card highlight-card">
+                <div class="role-badge">💰 Thủ quỹ trại</div>
+                <div class="member-avatar avatar-l">L</div>
+                <h3>Dương Thị Luyến</h3>
+                <div class="member-buttons">
+                    <a class="call-btn" href="tel:0365719910" onclick="return confirm('Gọi cho Dương Thị Luyến?')">📞 Gọi ngay</a>
+                    <a class="facebook-btn" href="https://www.facebook.com/duong.luyen.2004" target="_blank" rel="noopener">🌐 Facebook</a>
+                </div>
+            </div>
+
+            <!-- 5. Ban Điều Hành -->
+            <div class="member-card">
+                <div class="role-badge sub">💫 Ban Điều Hành</div>
+                <div class="member-avatar avatar-bdh">T</div>
+                <h3>Diệp Đoan Trinh</h3>
+                <div class="member-buttons">
+                    <a class="call-btn" href="tel:0816173731" onclick="return confirm('Gọi cho Diệp Đoan Trinh?')">📞 Gọi ngay</a>
+                    <a class="facebook-btn" href="https://www.facebook.com/theresadiep6" target="_blank" rel="noopener">🌐 Facebook</a>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <footer>
+        <p>Designed & Developed by Diệp Đoan Trinh</p>
+    </footer>
+
+    <script>
+        // Menu Toggle Mobile
+        const toggle = document.querySelector(".menu-toggle");
+        const menu = document.querySelector(".menu");
+
+        toggle.addEventListener("click", () => {
+            menu.classList.toggle("show");
+            toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                menu.classList.remove("show");
+                toggle.textContent = "☰";
+            }
+        });
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(reg => console.log('SW đã đăng ký thành công!'))
+                    .catch(err => console.log('Lỗi đăng ký SW:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

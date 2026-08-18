@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Nhóm - NGỜ YÊN NGHIÊNG</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../images/icon.png">
+    <link rel="apple-touch-icon" href="../images/icon.png">
+    <link rel="manifest" href="../manifest.json">
+
+    <meta name="theme-color" content="#123b8d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BTN LX">
+
+    <style>
+        .search-wrapper {
+            margin-top: 22px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            border: none !important;
+        }
+
+        .search-box-v2 {
+            display: flex !important;
+            align-items: center !important;
+            width: 100% !important;
+            max-width: 480px !important;
+            background: #ffffff !important;
+            border: 2px solid #2d5a27 !important;
+            border-radius: 30px !important;
+            padding: 4px 18px !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+            transition: all 0.25s ease !important;
+        }
+
+        .search-box-v2:focus-within {
+            border-color: #4b783f !important;
+            box-shadow: 0 6px 20px rgba(45, 90, 39, 0.25) !important;
+            transform: translateY(-1px);
+        }
+
+        .search-icon {
+            font-size: 1.15rem !important;
+            margin-right: 10px !important;
+            user-select: none !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1 !important;
+        }
+
+        .search-box-v2 input {
+            flex: 1 !important;
+            width: 100% !important;
+            border: none !important;
+            outline: none !important;
+            background: transparent !important;
+            padding: 10px 0 !important;
+            color: #1a1a1a !important;
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+        }
+
+        .search-box-v2 input::placeholder {
+            color: #777777 !important;
+            font-weight: 400 !important;
+        }
+
+        .quick-stats {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 24px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-num {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #2d5a27;
+        }
+
+        .stat-label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 20px;
+            background: #ddd;
+        }
+
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 22px;
+            margin-top: 30px;
+        }
+
+        .group-card {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid rgba(45, 90, 39, 0.15);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .group-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .group-badge {
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .group-badge.badge-green { background-color: #2d5a27 !important; }
+        .group-badge.badge-red { background-color: #c62828 !important; }
+        .group-badge.badge-blue { background-color: #1565c0 !important; }
+        .group-badge.badge-orange { background-color: #ef6c00 !important; }
+        .group-badge.badge-purple { background-color: #6a1b9a !important; }
+        .group-badge.badge-yellow { background-color: #fbc02d !important; color: #222 !important; }
+        .group-badge.badge-pink { background-color: #d81b60 !important; }
+        .group-badge.badge-teal { background-color: #00838f !important; }
+
+        .group-badge .dot {
+            width: 8px;
+            height: 8px;
+            background-color: #ffeb3b;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .member-count {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #2d5a27;
+            background: #e8f5e9;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .leader-box {
+            background: linear-gradient(135deg, #fffdf0, #fff3cd);
+            border: 1px solid #ffeeba;
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .leader-box .crown {
+            font-size: 1.5rem;
+        }
+
+        .leader-info .role {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            color: #856404;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            display: block;
+        }
+
+        .leader-info .name {
+            font-size: 1rem;
+            color: #222222;
+            font-weight: 700;
+        }
+
+        .members-section h4 {
+            font-size: 0.85rem;
+            color: #2d5a27;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .members-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .chip {
+            background: #f1f8e9;
+            color: #1b5e20;
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(45, 90, 39, 0.12);
+        }
+
+        .loading-state,
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            color: #2d5a27;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="../images/logo.png" alt="NGỜ YÊN NGHIÊNG">
+                </a>
+            </div>
+
+            <button class="menu-toggle" aria-label="Toggle Navigation">☰</button>
+
+            <div class="menu">
+                <a href="../index.html">Home</a>
+                <a href="schedule.html">Lịch trình</a>
+                <a href="groups.html" class="active">Danh sách nhóm</a>
+                <a href="room.html">Sắp xếp phòng</a>
+                <a href="confession.html">Confession</a>
+                <a href="gallery.html">Khoảnh khắc</a>
+                <a href="btc.html">BTC</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- 🔴 KHI CHƯA CÔNG BỐ: Thẻ thông báo hiển thị -->
+        <!-- Khi công bố: Bạn XÓA toàn bộ thẻ div.coming-soon-box này -->
+        <div class="coming-soon-box glass text-center" style="padding: 50px 20px; margin-top: 30px;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
+            <h2 style="color: #2d5a27; font-weight: 800;">THÔNG TIN SẼ ĐƯỢC CÔNG BỐ SAU</h2>
+            <p style="color: #555; margin-top: 8px;">Ban Tổ Chức đang hoàn thiện dữ liệu. Vui lòng quay lại sau nhé!</p>
+        </div>
+
+        <!-- 🟢 KHI CHƯA CÔNG BỐ: Nội dung chính tạm thời ẩn (style="display: none;") -->
+        <!-- Khi công bố: Xóa chữ style="display: none;" ở bên dưới -->
+        <div id="groupsContent" style="display: none;">
+            <section class="page-title glass text-center">
+                <span class="page-title-badge">⛺ CAMPING HUB</span>
+                <h1>Danh Sách Nhóm Trại 🏕️</h1>
+                <p>Tra cứu thông tin nhóm trại, trưởng nhóm và các đồng đội của bạn.</p>
+
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <span class="stat-num" id="statGroups">-</span>
+                        <span class="stat-label">Nhóm trại</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-num" id="statCampers">-</span>
+                        <span class="stat-label">Trại sinh</span>
+                    </div>
+                </div>
+
+                <div class="search-wrapper">
+                    <div class="search-box-v2">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Tìm tên thành viên hoặc tên nhóm...">
+                    </div>
+                </div>
+            </section>
+
+            <section class="groups-grid" id="groupsGrid">
+                <div class="skeleton-card" style="width: 100%;">
+                    <div class="skeleton-header">
+                        <div class="skeleton-avatar shimmer"></div>
+                        <div class="skeleton-info">
+                            <div class="skeleton-text-lg shimmer"></div>
+                            <div class="skeleton-text-sm shimmer"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-media shimmer" style="height: 100px;"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>Designed & Developed by Diệp Đoan Trinh</p>
+    </footer>
+
+    <script>
+        const toggle = document.querySelector(".menu-toggle");
+        const menu = document.querySelector(".menu");
+
+        toggle.addEventListener("click", () => {
+            menu.classList.toggle("show");
+            toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                menu.classList.remove("show");
+                toggle.textContent = "☰";
+            }
+        });
+
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxylF4BAqUZ5TrtZ95lqZiYyn5nmpH8kERssQawOgsKp7b2aL3FYBGIZ0QQeXox5hOjuw/exec";
+
+        async function fetchGroupsData() {
+            const grid = document.getElementById("groupsGrid");
+            if (!grid) return;
+
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=groups`);
+                const data = await response.json();
+
+                grid.innerHTML = "";
+
+                if (!data || data.length === 0) {
+                    grid.innerHTML = `<div class="no-results">❌ Chưa có dữ liệu nhóm trại.</div>`;
+                    document.getElementById("statGroups").textContent = "0";
+                    document.getElementById("statCampers").textContent = "0";
+                    return;
+                }
+
+                let totalCampers = 0;
+                document.getElementById("statGroups").textContent = data.length;
+
+                data.forEach((group, index) => {
+                    const memberCount = (group.members ? group.members.length : 0) + (group.leader ? 1 : 0);
+                    totalCampers += memberCount;
+
+                    const membersHtml = group.members && group.members.length > 0
+                        ? group.members.map(m => `<span class="chip">${m}</span>`).join('')
+                        : '<span class="chip">Đang cập nhật...</span>';
+
+                    const cardHtml = `
+                        <div class="group-card" data-group="nhom-${index + 1}">
+                            <div class="card-header">
+                                <span class="group-badge ${group.color || 'badge-green'}">
+                                    <span class="dot"></span> ${group.name}
+                                </span>
+                                <span class="member-count">👥 ${memberCount} Thành viên</span>
+                            </div>
+                            <div class="leader-box">
+                                <span class="crown">👑</span>
+                                <div class="leader-info">
+                                    <span class="role">Trưởng nhóm</span>
+                                    <strong class="name">${group.leader || 'Chưa phân công'}</strong>
+                                </div>
+                            </div>
+                            <div class="members-section">
+                                <h4>Thành viên</h4>
+                                <div class="members-chips">
+                                    ${membersHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    grid.insertAdjacentHTML("beforeend", cardHtml);
+                });
+
+                document.getElementById("statCampers").textContent = totalCampers;
+                initSearch();
+
+            } catch (error) {
+                console.error("Lỗi tải danh sách nhóm:", error);
+                grid.innerHTML = `<div class="no-results" style="color: #d32f2f;">⚠️ Không thể kết nối dữ liệu. Vui lòng kiểm tra lại mạng!</div>`;
+            }
+        }
+
+        const removeAccents = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
+
+        function initSearch() {
+            const searchInput = document.getElementById("searchInput");
+            const grid = document.getElementById("groupsGrid");
+            if (!searchInput || !grid) return;
+
+            searchInput.addEventListener("input", function () {
+                const query = removeAccents(this.value.trim());
+                const cards = document.querySelectorAll(".group-card");
+                let visibleCount = 0;
+
+                cards.forEach(card => {
+                    const text = removeAccents(card.textContent);
+                    if (text.includes(query)) {
+                        card.style.display = "flex";
+                        visibleCount++;
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+
+                let noResultEl = document.getElementById("noSearchResult");
+                if (visibleCount === 0) {
+                    if (!noResultEl) {
+                        noResultEl = document.createElement("div");
+                        noResultEl.id = "noSearchResult";
+                        noResultEl.className = "no-results";
+                        noResultEl.textContent = "🔍 Không tìm thấy thành viên hoặc nhóm phù hợp.";
+                        grid.appendChild(noResultEl);
+                    }
+                    noResultEl.style.display = "block";
+                } else if (noResultEl) {
+                    noResultEl.style.display = "none";
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", fetchGroupsData);
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(reg => console.log('SW đã đăng ký thành công!'))
+                    .catch(err => console.log('Lỗi đăng ký SW:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

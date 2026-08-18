@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Phòng Ngủ - NGỜ YÊN NGHIÊNG</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../images/icon.png">
+    <link rel="apple-touch-icon" href="../images/icon.png">
+    <link rel="manifest" href="../manifest.json">
+
+    <meta name="theme-color" content="#123b8d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BTN LX">
+
+    <style>
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .room-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1.5px solid rgba(62, 107, 54, 0.12);
+            box-shadow: var(--shadow-paper);
+            transition: var(--transition-smooth);
+        }
+
+        .room-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed #e2e8f0;
+        }
+
+        .room-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-nam {
+            background-color: #1565c0 !important;
+        }
+
+        .badge-nu {
+            background-color: #c2185b !important;
+        }
+
+        .room-count {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-green-dark);
+            background: rgba(62, 107, 54, 0.1);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .member-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .member-chip {
+            background: rgba(62, 107, 54, 0.08);
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: var(--color-text-main);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .member-note {
+            font-size: 0.78rem;
+            color: #ffffff !important;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff9800 0%, #ed6c02 100%);
+            padding: 3px 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(237, 108, 2, 0.35);
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .loading-box {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.1rem;
+            color: var(--color-green-dark);
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="../images/logo.png" alt="NGỜ YÊN NGHIÊNG">
+                </a>
+            </div>
+
+            <button class="menu-toggle" aria-label="Toggle Navigation">☰</button>
+
+            <div class="menu">
+                <a href="../index.html">Home</a>
+                <a href="schedule.html">Lịch trình</a>
+                <a href="groups.html">Danh sách nhóm</a>
+                <a href="room.html" class="active">Sắp xếp phòng</a>
+                <a href="confession.html">Confession</a>
+                <a href="gallery.html">Khoảnh khắc</a>
+                <a href="btc.html">BTC</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- 🔴 KHI CHƯA CÔNG BỐ: Thẻ thông báo hiển thị -->
+        <!-- Khi công bố: Bạn XÓA toàn bộ thẻ div.coming-soon-box này -->
+        <div class="coming-soon-box glass text-center" style="padding: 50px 20px; margin-top: 30px;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
+            <h2 style="color: #2d5a27; font-weight: 800;">THÔNG TIN SẼ ĐƯỢC CÔNG BỐ SAU</h2>
+            <p style="color: #555; margin-top: 8px;">Ban Tổ Chức đang hoàn thiện dữ liệu. Vui lòng quay lại sau nhé!</p>
+        </div>
+
+        <!-- 🟢 KHI CHƯA CÔNG BỐ: Nội dung chính tạm thời ẩn (style="display: none;") -->
+        <!-- Khi công bố: Xóa chữ style="display: none;" ở bên dưới -->
+        <div id="roomContent" style="display: none;">
+            <section class="page-title glass text-center">
+                <span class="page-title-badge">🛏️ KHU NGHỈ NƠI TRẠI</span>
+                <h1>Phân Chia Phòng Ngủ ⛺</h1>
+                <p>Tra cứu thông tin phòng nghỉ dành riêng cho Nam & Nữ</p>
+            </section>
+
+            <!-- Thanh Tìm Kiếm & Bộ Lọc -->
+            <section style="max-width: 800px; margin: 0 auto 20px;">
+                <div class="search-box-v2" style="margin-bottom: 15px;">
+                    <input type="text" id="searchInput" placeholder="🔍 Nhập tên trại sinh hoặc số phòng..."
+                        oninput="filterRooms()">
+                </div>
+
+                <div class="filter-tags">
+                    <button class="tag-btn active" onclick="setGenderFilter('ALL', this)">🌐 Tất cả phòng</button>
+                    <button class="tag-btn" onclick="setGenderFilter('Nam', this)">👦 Phòng Nam</button>
+                    <button class="tag-btn" onclick="setGenderFilter('Nu', this)">👧 Phòng Nữ</button>
+                </div>
+            </section>
+
+            <!-- Hiển thị Danh Sách Phòng -->
+            <section id="roomsContainer" class="rooms-grid">
+                <div class="skeleton-card" style="width: 100%;">
+                    <div class="skeleton-header">
+                        <div class="skeleton-avatar shimmer"></div>
+                        <div class="skeleton-info">
+                            <div class="skeleton-text-lg shimmer"></div>
+                            <div class="skeleton-text-sm shimmer"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-media shimmer" style="height: 100px;"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>Designed & Developed by Diệp Đoan Trinh</p>
+    </footer>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxylF4BAqUZ5TrtZ95lqZiYyn5nmpH8kERssQawOgsKp7b2aL3FYBGIZ0QQeXox5hOjuw/exec";
+
+        let allRoomsData = {};
+        let currentGenderFilter = "ALL";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchRoomData();
+            setupMobileMenu();
+        });
+
+        function fetchRoomData() {
+            fetch(`${SCRIPT_URL}?action=get_rooms`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        groupRooms(data.data);
+                        renderRooms();
+                    } else {
+                        showError("Không thể tải danh sách phòng!");
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi fetch phòng:", err);
+                    showError("Lỗi kết nối máy chủ! Vui lòng thử lại sau.");
+                });
+        }
+
+        function groupRooms(flatList) {
+            allRoomsData = {};
+            flatList.forEach(item => {
+                const key = `${item.gender}_${item.room}`;
+                if (!allRoomsData[key]) {
+                    allRoomsData[key] = {
+                        roomName: item.room,
+                        gender: item.gender,
+                        members: []
+                    };
+                }
+                allRoomsData[key].members.push({
+                    name: item.name,
+                    note: item.note
+                });
+            });
+        }
+
+        function renderRooms() {
+            const container = document.getElementById("roomsContainer");
+            if (!container) return;
+            const searchVal = document.getElementById("searchInput").value.toLowerCase().trim();
+            container.innerHTML = "";
+
+            const roomKeys = Object.keys(allRoomsData);
+
+            if (roomKeys.length === 0) {
+                container.innerHTML = `<div class="loading-box glass">Chưa có dữ liệu phòng ngủ.</div>`;
+                return;
+            }
+
+            let hasMatches = false;
+
+            roomKeys.forEach(key => {
+                const room = allRoomsData[key];
+
+                if (currentGenderFilter !== "ALL" && room.gender !== currentGenderFilter) {
+                    return;
+                }
+
+                const matchRoomName = room.roomName.toLowerCase().includes(searchVal);
+                const matchedMembers = room.members.filter(m => m.name.toLowerCase().includes(searchVal));
+
+                if (searchVal && !matchRoomName && matchedMembers.length === 0) {
+                    return;
+                }
+
+                hasMatches = true;
+
+                const card = document.createElement("div");
+                card.className = "room-card";
+
+                const isNam = room.gender === "Nam";
+                const badgeClass = isNam ? "badge-nam" : "badge-nu";
+                const icon = isNam ? "👦" : "👧";
+                const genderTitle = isNam ? "Phòng Nam" : "Phòng Nữ";
+
+                let membersHTML = room.members.map((m, idx) => `
+                    <div class="member-chip">
+                        <span><strong>${idx + 1}.</strong> ${m.name}</span>
+                        ${m.note ? `<span class="member-note">${m.note}</span>` : ""}
+                    </div>
+                `).join("");
+
+                card.innerHTML = `
+                    <div class="room-header">
+                        <span class="room-badge ${badgeClass}">
+                            ${icon} ${genderTitle} ${room.roomName}
+                        </span>
+                        <span class="room-count">${room.members.length} trại sinh</span>
+                    </div>
+                    <div class="member-list">
+                        ${membersHTML}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            if (!hasMatches) {
+                container.innerHTML = `<div class="loading-box glass">Không tìm thấy phòng hoặc trại sinh phù hợp!</div>`;
+            }
+        }
+
+        function setGenderFilter(gender, btn) {
+            currentGenderFilter = gender;
+            document.querySelectorAll(".filter-tags .tag-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderRooms();
+        }
+
+        function filterRooms() {
+            renderRooms();
+        }
+
+        function showError(msg) {
+            const container = document.getElementById("roomsContainer");
+            if (container) {
+                container.innerHTML = `<div class="loading-box glass" style="color: #c62828;">⚠️ ${msg}</div>`;
+            }
+        }
+
+        function setupMobileMenu() {
+            const toggle = document.querySelector(".menu-toggle");
+            const menu = document.querySelector(".menu");
+            if (toggle && menu) {
+                toggle.addEventListener("click", () => {
+                    menu.classList.toggle("show");
+                    toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
+                });
+            }
+        }
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(reg => console.log('SW đã đăng ký thành công!'))
+                    .catch(err => console.log('Lỗi đăng ký SW:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

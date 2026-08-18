@@ -1,0 +1,15 @@
+{
+  "name": "NGỜ YÊN NGHIÊNG",
+  "short_name": "NGỜ YÊN NGHIÊNG",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fdfcf7",
+  "theme_color": "#4c7840",
+  "icons": [
+    {
+      "src": "images/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

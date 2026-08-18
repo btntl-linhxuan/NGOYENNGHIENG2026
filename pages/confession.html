@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confession - NGỜ YÊN NGHIÊNG</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../images/icon.png">
+    <link rel="apple-touch-icon" href="../images/icon.png">
+    <link rel="manifest" href="../manifest.json">
+
+    <meta name="theme-color" content="#123b8d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BTN LX">
+
+    <style>
+        /* Global Reset cho Radio Input để không bị dính CSS chung */
+        input[type="radio"] {
+            display: none !important;
+        }
+
+        /* CSS Layout & Preview */
+        .cfs-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .preview-section {
+            position: sticky;
+            top: 90px;
+        }
+
+        .cfs-card-preview {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+
+            /* VIỀN NÉT ĐỨT CỦA BẠN */
+            border: 2px dashed #7cb342;
+        }
+
+        /* Chế độ danh tính (Public / Anonymous Toggle) */
+        .identity-toggle {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+
+        .toggle-option {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #dce4d9;
+            border-radius: 14px;
+            background: #ffffff;
+            text-align: center;
+            font-weight: 600;
+            color: var(--color-green-dark, #213b1a);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .toggle-option:hover {
+            border-color: var(--color-green-main, #3e6b36);
+            background: rgba(62, 107, 54, 0.05);
+        }
+
+        .toggle-option.active {
+            border-color: var(--color-green-main, #3e6b36);
+            background: rgba(62, 107, 54, 0.12);
+            color: var(--color-green-dark, #213b1a);
+            font-weight: 800;
+        }
+
+        /* Pick Emoji Ẩn danh */
+        .anon-avatar-picker {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .avatar-opt {
+            font-size: 1.4rem;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 2px solid #dce4d9;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .avatar-opt:hover {
+            transform: scale(1.1);
+        }
+
+        .avatar-opt.active {
+            border-color: var(--color-green-main, #3e6b36);
+            background: rgba(62, 107, 54, 0.15);
+        }
+
+        /* Thanh đếm ký tự */
+        .char-progress-bg {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        .char-progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #4caf50;
+            transition: width 0.2s ease, background-color 0.2s ease;
+        }
+
+        /* Nút Gửi */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--color-green-main, #3e6b36);
+            color: #ffffff !important;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(62, 107, 54, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .submit-btn:hover {
+            background: var(--color-green-dark, #213b1a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(33, 59, 26, 0.3);
+        }
+
+        /* Nút thả tim */
+        .action-btn.like-btn {
+            background: #ffffff;
+            border: 1.5px solid #ffccd5;
+            color: #d63384;
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 8px rgba(255, 182, 193, 0.3);
+        }
+
+        .action-btn.like-btn:hover {
+            background: #fff0f3;
+            border-color: #ff4d6d;
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 4px 12px rgba(255, 77, 109, 0.3);
+        }
+
+        .action-btn.like-btn.liked {
+            background: linear-gradient(135deg, #ff4d6d, #ff758f);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(255, 77, 109, 0.4);
+        }
+
+        /* Toast thông báo */
+        .toast-msg {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(33, 59, 26, 0.95);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .toast-msg.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 850px) {
+            .cfs-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-section {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="../images/logo.png" alt="NGỜ YÊN NGHIÊNG">
+                </a>
+            </div>
+
+            <button class="menu-toggle" type="button" aria-label="Toggle Navigation">☰</button>
+
+            <div class="menu">
+                <a href="../index.html">Home</a>
+                <a href="schedule.html">Lịch trình</a>
+                <a href="groups.html">Danh sách nhóm</a>
+                <a href="room.html">Sắp xếp phòng</a>
+                <a href="confession.html" class="active">Confession</a>
+                <a href="gallery.html">Khoảnh khắc</a>
+                <a href="btc.html">BTC</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="page-title glass text-center">
+            <span class="page-title-badge">💌 GÓC SẺ CHIA</span>
+            <h1>Góc Confession</h1>
+            <p>Có điều muốn gửi gắm nhưng chưa đủ can đảm để nói trực tiếp?</p>
+            <p class="sub-text">Mọi lời nhắn đều được BTC duyệt cẩn thận trước khi xuất hiện trên trang chính!</p>
+        </section>
+
+        <div class="cfs-layout">
+            <form class="confession-form glass" id="confessionForm">
+                <h2>✍️ Viết Confession</h2>
+
+                <div class="form-group">
+                    <label>Chế độ danh tính</label>
+                    <div class="identity-toggle">
+                        <label class="toggle-option active" id="optPublic">
+                            <input type="radio" name="identity" value="name" checked>
+                            <span>👤 Công khai</span>
+                        </label>
+                        <label class="toggle-option" id="optAnon">
+                            <input type="radio" name="identity" value="anonymous">
+                            <span>🕵️ Ẩn danh</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="nameGroup">
+                    <label for="name">Tên của bạn</label>
+                    <input type="text" id="name" placeholder="Nhập tên hoặc biệt danh..." required>
+                </div>
+
+                <div class="form-group" id="anonAvatarGroup" style="display: none;">
+                    <label>Chọn biểu tượng ẩn danh</label>
+                    <div class="anon-avatar-picker">
+                        <span class="avatar-opt active" data-avatar="🕵️">🕵️</span>
+                        <span class="avatar-opt" data-avatar="🐱">🐱</span>
+                        <span class="avatar-opt" data-avatar="🦊">🦊</span>
+                        <span class="avatar-opt" data-avatar="🧋">🧋</span>
+                        <span class="avatar-opt" data-avatar="🐼">🐼</span>
+                        <span class="avatar-opt" data-avatar="🥑">🥑</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="message">Nội dung gửi gắm</label>
+                        <span class="char-count"><span id="charNum">0</span>/500</span>
+                    </div>
+                    <textarea id="message" required maxlength="500"
+                        placeholder="Viết những tâm tư, lời chúc hoặc gửi gắm tới ai đó..."></textarea>
+                    <div class="char-progress-bg">
+                        <div class="char-progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span>💌 Gửi ngay cho BTC</span>
+                </button>
+            </form>
+
+            <div class="preview-section">
+                <h3 style="margin-bottom: 12px; color: #2d5a27;">👀 Xem trước hiển thị</h3>
+                <div class="cfs-card-preview">
+                    <div class="cfs-card-header"
+                        style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                        <div class="avatar" id="pvAvatar" style="font-size:1.5rem;">👤</div>
+                        <div class="user-meta" style="flex:1;">
+                            <strong id="pvName" style="display:block; font-size:1.05rem;">Tên của bạn</strong>
+                            <small style="color:#777;">Vừa xong</small>
+                        </div>
+                        <span class="status-badge"
+                            style="background: rgba(76, 175, 80, 0.15); color: #2e7d32; padding:3px 8px; border-radius:12px; font-size:0.8rem;">Xem
+                            trước</span>
+                    </div>
+                    <div class="cfs-card-body">
+                        <p id="pvMessage" style="color:#444; line-height:1.5; word-break:break-word;">Nội dung bài viết
+                            sẽ hiển thị ở đây khi bạn gõ...</p>
+                    </div>
+                    <div class="cfs-card-footer"
+                        style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: flex-end;">
+                        <button class="action-btn like-btn" type="button" style="pointer-events: none;">
+                            <span class="heart-icon">❤️</span>
+                            <span class="like-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Khung hiển thị danh sách Confession đã được BTC duyệt -->
+        <section class="published-cfs-section" style="margin-top: 40px;">
+            <h2 class="text-center" style="margin-bottom: 25px; color: #2d5a27;">💌 Lời Nhắn Đã Duyệt</h2>
+
+            <div id="loadingCfs">
+                <div class="skeleton-card">
+                    <div class="skeleton-header">
+                        <div class="skeleton-avatar shimmer"></div>
+                        <div class="skeleton-info">
+                            <div class="skeleton-text-lg shimmer"></div>
+                            <div class="skeleton-text-sm shimmer"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-caption shimmer"></div>
+                </div>
+            </div>
+
+            <div class="cfs-grid" id="cfsListContainer">
+                <!-- Các card confession được duyệt sẽ tự động render vào đây -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Thông Báo -->
+    <div id="toast" class="toast-msg">💖 Confession của bạn đã được gửi thành công!</div>
+
+    <footer>
+        <p>Designed & Developed by Diệp Đoan Trinh</p>
+    </footer>
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwK9Fs_PEFXXcHyH7h1DPxjNuKlIXnaPBjZdlZIiAeEd_ydjKB-yz-0f224P62ET1S6Lw/exec";
+
+        // 1. Quản lý Menu Mobile
+        const toggle = document.querySelector(".menu-toggle");
+        const menu = document.querySelector(".menu");
+        toggle.addEventListener("click", () => {
+            menu.classList.toggle("show");
+            toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
+        });
+        document.addEventListener("click", (e) => {
+            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                menu.classList.remove("show");
+                toggle.textContent = "☰";
+            }
+        });
+
+        // 2. Logic Form & Live Preview
+        const form = document.getElementById("confessionForm");
+        const nameInput = document.getElementById("name");
+        const messageInput = document.getElementById("message");
+        const nameGroup = document.getElementById("nameGroup");
+        const anonAvatarGroup = document.getElementById("anonAvatarGroup");
+        const progressBar = document.getElementById("progressBar");
+        const charNum = document.getElementById("charNum");
+
+        const pvName = document.getElementById("pvName");
+        const pvMessage = document.getElementById("pvMessage");
+        const pvAvatar = document.getElementById("pvAvatar");
+
+        const optPublic = document.getElementById("optPublic");
+        const optAnon = document.getElementById("optAnon");
+        let currentAnonAvatar = "🕵️";
+
+        optPublic.addEventListener("click", () => switchIdentity("name"));
+        optAnon.addEventListener("click", () => switchIdentity("anonymous"));
+
+        function switchIdentity(type) {
+            if (type === "anonymous") {
+                optAnon.classList.add("active");
+                optPublic.classList.remove("active");
+                optAnon.querySelector("input").checked = true;
+
+                nameGroup.style.display = "none";
+                anonAvatarGroup.style.display = "block";
+                nameInput.required = false;
+
+                pvName.textContent = "Người giấu tên";
+                pvAvatar.textContent = currentAnonAvatar;
+            } else {
+                optPublic.classList.add("active");
+                optAnon.classList.remove("active");
+                optPublic.querySelector("input").checked = true;
+
+                nameGroup.style.display = "block";
+                anonAvatarGroup.style.display = "none";
+                nameInput.required = true;
+
+                pvName.textContent = nameInput.value.trim() || "Tên của bạn";
+                pvAvatar.textContent = "👤";
+            }
+        }
+
+        document.querySelectorAll(".avatar-opt").forEach(opt => {
+            opt.addEventListener("click", function () {
+                document.querySelectorAll(".avatar-opt").forEach(o => o.classList.remove("active"));
+                this.classList.add("active");
+                currentAnonAvatar = this.dataset.avatar;
+                pvAvatar.textContent = currentAnonAvatar;
+            });
+        });
+
+        nameInput.addEventListener("input", function () {
+            pvName.textContent = this.value.trim() || "Tên của bạn";
+        });
+
+        messageInput.addEventListener("input", function () {
+            const text = this.value;
+            const length = text.length;
+            charNum.textContent = length;
+            pvMessage.textContent = text.trim() || "Nội dung bài viết sẽ hiển thị ở đây khi bạn gõ...";
+
+            const percentage = (length / 500) * 100;
+            progressBar.style.width = percentage + "%";
+
+            if (percentage > 90) progressBar.style.backgroundColor = "#e53935";
+            else if (percentage > 70) progressBar.style.backgroundColor = "#fb8c00";
+            else progressBar.style.backgroundColor = "#4caf50";
+        });
+
+        // 3. Gửi Confession
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const submitBtn = form.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "⏳ Đang gửi...";
+
+            const identity = document.querySelector('input[name="identity"]:checked').value;
+
+            const data = {
+                anonymous: identity === "anonymous",
+                name: identity === "anonymous" ? `Ẩn danh (${currentAnonAvatar})` : nameInput.value,
+                message: messageInput.value
+            };
+
+            fetch(scriptURL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(data)
+            })
+                .then(() => {
+                    showToast("💖 Confession của bạn đã gửi thành công tới BTC!");
+                    form.reset();
+                    pvMessage.textContent = "Nội dung bài viết sẽ hiển thị ở đây khi bạn gõ...";
+                    pvName.textContent = "Tên của bạn";
+                    pvAvatar.textContent = "👤";
+                    charNum.textContent = "0";
+                    progressBar.style.width = "0%";
+                    switchIdentity("name");
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = "<span>💌 Gửi ngay cho BTC</span>";
+                })
+                .catch(err => {
+                    console.error("Lỗi gửi bài:", err);
+                    showToast("⚠️ Có lỗi xảy ra, vui lòng thử lại!");
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = "<span>💌 Gửi ngay cho BTC</span>";
+                });
+        });
+
+        // 4. Tải danh sách Confession đã duyệt
+        function loadApprovedConfessions() {
+            const listContainer = document.getElementById("cfsListContainer");
+            const loadingEl = document.getElementById("loadingCfs");
+            const likedList = JSON.parse(localStorage.getItem("liked_confessions") || "[]");
+
+            fetch(`${scriptURL}?action=cfs`)
+                .then(response => response.json())
+                .then(data => {
+                    loadingEl.style.display = "none";
+                    listContainer.innerHTML = "";
+
+                    if (!data || data.length === 0) {
+                        listContainer.innerHTML = `<p class="text-center" style="color: #666; width: 100%;">Chưa có bài confession nào được duyệt.</p>`;
+                        return;
+                    }
+
+                    data.forEach((cfs, index) => {
+                        const cfId = cfs.id || `cfs-${index}`;
+                        const isLiked = likedList.includes(String(cfId));
+
+                        let displayLikes = cfs.likes || 0;
+                        if (isLiked) displayLikes += 1;
+
+                        const card = document.createElement("div");
+                        card.className = "cfs-card-preview glass";
+                        card.style.marginBottom = "20px";
+
+                        let avatarIcon = "👤";
+                        const anonEmojis = ["🕵️", "🐱", "🦊", "🧋", "🐼", "🥑"];
+                        for (let emoji of anonEmojis) {
+                            if (cfs.name && cfs.name.includes(emoji)) {
+                                avatarIcon = emoji;
+                                break;
+                            }
+                        }
+
+                        card.innerHTML = `
+                            <div class="cfs-card-header" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                                <div class="avatar" style="font-size:1.5rem;">${avatarIcon}</div>
+                                <div class="user-meta" style="flex:1;">
+                                    <strong style="display:block; font-size:1.05rem; color:#222;">${escapeHtml(cfs.name)}</strong>
+                                    <small style="color:#777;">${cfs.time || ''}</small>
+                                </div>
+                                <span class="status-badge" style="background: rgba(76, 175, 80, 0.15); color: #2e7d32; padding:3px 8px; border-radius:12px; font-size:0.85rem; font-weight:600;">#${data.length - index}</span>
+                            </div>
+                            <div class="cfs-card-body">
+                                <p style="color:#333; line-height:1.55; word-break:break-word;">${escapeHtml(cfs.message)}</p>
+                            </div>
+                            <div class="cfs-card-footer" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: flex-end;">
+                                <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" type="button" onclick="toggleLike('${cfId}')">
+                                    <span class="heart-icon">❤️</span> 
+                                    <span class="like-count" id="count-${cfId}">${displayLikes}</span>
+                                </button>
+                            </div>
+                        `;
+                        listContainer.appendChild(card);
+                    });
+                })
+                .catch(err => {
+                    console.error("Lỗi tải confession:", err);
+                    loadingEl.textContent = "Không thể tải danh sách confession. Vui lòng thử lại sau!";
+                });
+        }
+
+        // 5. Xử lý Thả Tim Confession & Đồng bộ về Server
+        function toggleLike(cfId) {
+            const countEl = document.getElementById(`count-${cfId}`);
+            if (!countEl) return;
+
+            const btn = countEl.closest('.like-btn');
+            let likedList = JSON.parse(localStorage.getItem("liked_confessions") || "[]");
+            let currentCount = parseInt(countEl.textContent) || 0;
+            const strId = String(cfId);
+            let actionType = "like";
+
+            if (likedList.includes(strId)) {
+                likedList = likedList.filter(id => id !== strId);
+                currentCount = Math.max(0, currentCount - 1);
+                btn.classList.remove("liked");
+                actionType = "unlike";
+            } else {
+                likedList.push(strId);
+                currentCount++;
+                btn.classList.add("liked");
+            }
+
+            // Cập nhật giao diện & localStorage ngay lập tức
+            countEl.textContent = currentCount;
+            localStorage.setItem("liked_confessions", JSON.stringify(likedList));
+
+            // Gửi yêu cầu cập nhật tim thực về Google Sheet
+            fetch(scriptURL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({
+                    action: "like_cfs",
+                    id: strId,
+                    type: actionType
+                })
+            }).catch(err => console.error("Lỗi cập nhật tim CFS:", err));
+        }
+
+        // 6. Helpers
+        function escapeHtml(text) {
+            if (!text) return "";
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            if (!toast) return;
+            toast.textContent = message;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000);
+        }
+
+        document.addEventListener("DOMContentLoaded", loadApprovedConfessions);
+    </script>
+
+    <!-- 7. Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(reg => console.log('SW đã đăng ký thành công!'))
+                    .catch(err => console.log('Lỗi đăng ký SW:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

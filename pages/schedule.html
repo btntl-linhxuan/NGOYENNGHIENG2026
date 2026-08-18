@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch trình - NGỜ YÊN NGHIÊNG</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../images/icon.png">
+    <link rel="apple-touch-icon" href="../images/icon.png">
+    <link rel="manifest" href="../manifest.json">
+
+    <meta name="theme-color" content="#123b8d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BTN LX">
+
+    <style>
+        /* CSS Bộ lọc Chọn Ngày */
+        .schedule-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #ffffff !important;
+            color: #2d5a27 !important;
+            border: 1.5px solid #2d5a27 !important;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-btn:hover {
+            background: #eaf2ea !important;
+            transform: translateY(-1px);
+        }
+
+        .tab-btn.active {
+            background: #2d5a27 !important;
+            color: #ffffff !important;
+            border-color: #2d5a27 !important;
+            box-shadow: 0 4px 12px rgba(45, 90, 39, 0.3);
+        }
+
+        /* Banner Hoạt động hiện tại */
+        .live-banner {
+            background: linear-gradient(135deg, #2d5a27, #4b783f);
+            color: #ffffff;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .live-banner .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ff4d6d;
+            color: white;
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Style Bảng Lịch trình */
+        .day-block {
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .schedule table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+            margin-top: 12px;
+        }
+
+        .schedule th {
+            background: #2d5a27 !important;
+            color: #ffffff !important;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .schedule td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            color: #222222;
+            vertical-align: middle;
+            font-size: 0.95rem;
+        }
+
+        .schedule tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Trạng thái sự kiện */
+        tr.event-past {
+            opacity: 0.55;
+            background: rgba(240, 240, 240, 0.5);
+        }
+
+        tr.event-active {
+            background: rgba(255, 235, 238, 0.85) !important;
+            border-left: 4px solid #ff4d6d;
+            font-weight: 600;
+        }
+
+        .status-tag {
+            display: inline-block;
+            font-size: 0.78rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: bold;
+        }
+
+        .status-tag.active {
+            background: #ff4d6d;
+            color: #fff;
+        }
+
+        .status-tag.past {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .status-tag.upcoming {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 600px) {
+
+            .schedule th,
+            .schedule td {
+                padding: 12px;
+                font-size: 0.88rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="../images/logo.png" alt="NGỜ YÊN NGHIÊNG">
+                </a>
+            </div>
+
+            <button class="menu-toggle" type="button" aria-label="Toggle Navigation">☰</button>
+
+            <div class="menu">
+                <a href="../index.html">Home</a>
+                <a href="schedule.html" class="active">Lịch trình</a>
+                <a href="groups.html">Danh sách nhóm</a>
+                <a href="room.html">Sắp xếp phòng</a>
+                <a href="confession.html">Confession</a>
+                <a href="gallery.html">Khoảnh khắc</a>
+                <a href="btc.html">BTC</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- 🔴 KHI CHƯA CÔNG BỐ: Thẻ thông báo hiển thị -->
+        <!-- Khi công bố: Bạn XÓA toàn bộ thẻ div.coming-soon-box này -->
+        <div class="coming-soon-box glass text-center" style="padding: 50px 20px; margin-top: 30px;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
+            <h2 style="color: #2d5a27; font-weight: 800;">THÔNG TIN SẼ ĐƯỢC CÔNG BỐ SAU</h2>
+            <p style="color: #555; margin-top: 8px;">Ban Tổ Chức đang hoàn thiện dữ liệu. Vui lòng quay lại sau nhé!</p>
+        </div>
+
+        <!-- 🟢 KHI CHƯA CÔNG BỐ: Nội dung chính tạm thời ẩn (style="display: none;") -->
+        <!-- Khi công bố: Xóa chữ style="display: none;" ở bên dưới -->
+        <div id="scheduleContent" style="display: none;">
+            <section class="page-title glass text-center">
+                <span class="page-title-badge">📅 TIMELINE</span>
+                <h1>Lịch Trình Trại</h1>
+                <p>Toàn bộ hoạt động chi tiết trong suốt kỳ trại.</p>
+            </section>
+
+            <!-- Thẻ thông báo hoạt động đang diễn ra -->
+            <div id="liveBanner" class="live-banner" style="display: none;">
+                <div class="live-badge">🔴 ĐANG DIỄN RA</div>
+                <h3 id="liveTitle" style="margin: 4px 0; font-size: 1.2rem;">-</h3>
+                <p id="liveTime" style="margin: 0; opacity: 0.9; font-size: 0.9rem;">🕒 -</p>
+            </div>
+
+            <!-- Bộ lọc chọn ngày -->
+            <div class="schedule-controls">
+                <button class="tab-btn active" onclick="filterSchedule('all', this)">📌 Tất cả</button>
+                <button class="tab-btn" onclick="filterSchedule('day0', this)">📅 Ngày 0 (30/8)</button>
+                <button class="tab-btn" onclick="filterSchedule('day1', this)">📅 Ngày 1 (31/8)</button>
+            </div>
+
+            <section class="schedule">
+                <!-- NGÀY 0 -->
+                <div class="day-block" id="day0">
+                    <h2 style="color: #2d5a27; margin-top: 15px;">📅 Ngày 0 (30/8)</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 35%;">Thời gian</th>
+                                <th>Hoạt động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>07:00 - 10:30</td>
+                                <td>Thờ phượng Chúa @ Hội Thánh Tin Lành Linh Xuân</td>
+                            </tr>
+                            <tr>
+                                <td>10:30 - 11:00</td>
+                                <td>Tập trung + ăn trưa trước khi khởi hành</td>
+                            </tr>
+                            <tr>
+                                <td>12:00 - 21:00</td>
+                                <td>Di chuyển + ăn tối</td>
+                            </tr>
+                            <tr>
+                                <td>21:30 - 22:30</td>
+                                <td>Sinh hoạt nhóm nhỏ + ăn nhẹ</td>
+                            </tr>
+                            <tr>
+                                <td>22:30 - 23:00</td>
+                                <td>Giờ giới nghiêm</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- NGÀY 1 -->
+                <div class="day-block" id="day1">
+                    <h2 style="color: #2d5a27; margin-top: 25px;">📅 Ngày 1 (31/8)</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 35%;">Thời gian</th>
+                                <th>Hoạt động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>06:15 - 07:00</td>
+                                <td>Tĩnh nguyện (Linh An soạn)</td>
+                            </tr>
+                            <tr>
+                                <td>07:00 - 07:50</td>
+                                <td>Ăn sáng</td>
+                            </tr>
+                            <tr>
+                                <td>08:00 - 08:10</td>
+                                <td>Phá băng</td>
+                            </tr>
+                            <tr>
+                                <td>08:10 - 08:30</td>
+                                <td>Tôn vinh Chúa</td>
+                            </tr>
+                            <tr>
+                                <td>08:30 - 09:30</td>
+                                <td>Khai mạc trại</td>
+                            </tr>
+                            <tr>
+                                <td>09:30 - 10:20</td>
+                                <td>Học Kinh Thánh</td>
+                            </tr>
+                            <tr>
+                                <td>10:20 - 10:30</td>
+                                <td>Giải lao</td>
+                            </tr>
+                            <tr>
+                                <td>10:30 - 11:00</td>
+                                <td>Sinh hoạt nhóm nhỏ (Mỹ Hằng + Tín Huỳnh + Tường Vy chuẩn bị)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>Designed & Developed by Diệp Đoan Trinh</p>
+    </footer>
+
+    <script>
+        // 1. Quản lý Điều hướng Menu
+        const toggle = document.querySelector(".menu-toggle");
+        const menu = document.querySelector(".menu");
+
+        toggle.addEventListener("click", () => {
+            menu.classList.toggle("show");
+            toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
+        });
+
+        document.querySelectorAll(".menu a").forEach(link => {
+            link.addEventListener("click", () => {
+                menu.classList.remove("show");
+                toggle.textContent = "☰";
+            });
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                menu.classList.remove("show");
+                toggle.textContent = "☰";
+            }
+        });
+
+        // 2. Chức năng Lọc Ngày
+        function filterSchedule(dayId, btn) {
+            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+            if (btn) btn.classList.add("active");
+
+            const dayBlocks = document.querySelectorAll(".day-block");
+            dayBlocks.forEach(block => {
+                if (dayId === "all" || block.id === dayId) {
+                    block.style.display = "block";
+                } else {
+                    block.style.display = "none";
+                }
+            });
+        }
+
+        // 3. Logic Đánh dấu Lịch trình theo Thời gian Thực
+        function highlightCurrentSchedule() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+
+            let foundActive = false;
+            const liveBanner = document.getElementById("liveBanner");
+            const liveTitle = document.getElementById("liveTitle");
+            const liveTime = document.getElementById("liveTime");
+
+            const dayBlocks = document.querySelectorAll(".day-block");
+
+            dayBlocks.forEach(block => {
+                const h2 = block.querySelector("h2");
+                if (!h2) return;
+
+                const dateMatch = h2.textContent.match(/(\d{1,2})\/(\d{1,2})/);
+                if (!dateMatch) return;
+
+                const day = parseInt(dateMatch[1]);
+                const month = parseInt(dateMatch[2]) - 1;
+
+                const rows = block.querySelectorAll("tbody tr");
+                rows.forEach(row => {
+                    const timeCell = row.cells[0]?.textContent.trim();
+                    const titleCell = row.cells[1];
+                    if (!timeCell || !titleCell) return;
+
+                    const times = timeCell.split("-").map(t => t.trim());
+                    if (times.length !== 2) return;
+
+                    const [startH, startM] = times[0].split(":").map(Number);
+                    const [endH, endM] = times[1].split(":").map(Number);
+
+                    const startTime = new Date(currentYear, month, day, startH, startM);
+                    const endTime = new Date(currentYear, month, day, endH, endM);
+
+                    const oldTag = titleCell.querySelector(".status-tag");
+                    if (oldTag) oldTag.remove();
+
+                    const tag = document.createElement("span");
+
+                    if (now >= startTime && now <= endTime) {
+                        row.className = "event-active";
+                        tag.className = "status-tag active";
+                        tag.textContent = "🔴 Đang diễn ra";
+                        titleCell.appendChild(tag);
+
+                        liveTitle.textContent = titleCell.childNodes[0].textContent.trim();
+                        liveTime.textContent = `🕒 ${timeCell} (${day}/${month + 1})`;
+                        liveBanner.style.display = "block";
+                        foundActive = true;
+
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else if (now > endTime) {
+                        row.className = "event-past";
+                        tag.className = "status-tag past";
+                        tag.textContent = "✓ Đã xong";
+                        titleCell.appendChild(tag);
+                    } else {
+                        row.className = "";
+                        tag.className = "status-tag upcoming";
+                        tag.textContent = "⏳ Sắp tới";
+                        titleCell.appendChild(tag);
+                    }
+                });
+            });
+
+            if (!foundActive) {
+                liveBanner.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", highlightCurrentSchedule);
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(reg => console.log('SW đã đăng ký thành công!'))
+                    .catch(err => console.log('Lỗi đăng ký SW:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>
