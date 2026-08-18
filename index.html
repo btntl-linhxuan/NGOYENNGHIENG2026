@@ -15,6 +15,83 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="BTN LX">
+
+    <style>
+        /* CSS ghim đồng hồ đếm ngược góc dưới màn hình */
+        .sticky-countdown {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 360px;
+            width: calc(100% - 40px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            padding: 16px;
+        }
+
+        /* Căn chỉnh ô số đồng hồ đếm ngược */
+        .mini-timer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 12px 0 4px 0;
+        }
+
+        .timer-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 58px;
+            padding: 8px 4px;
+            background: #f4f6f8;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .timer-card span {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            color: #1e293b;
+        }
+
+        .timer-card small {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            margin-top: 4px;
+            color: #64748b;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .timer-sep {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #475569;
+            align-self: center;
+            margin-bottom: 12px;
+        }
+
+        footer {
+            padding-bottom: 140px !important;
+        }
+
+        @media (max-width: 480px) {
+            .sticky-countdown {
+                bottom: 12px;
+                right: 12px;
+                left: 12px;
+                width: auto;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -29,7 +106,6 @@
 
     <!-- Navigation Bar -->
     <header>
-        <!-- Live Announcement Bar (Thông báo timeline theo thời gian thực) -->
         <div class="announcement-bar" id="announcementBar" style="display: none;">
             <div class="announcement-content">
                 <span class="badge-live">LIVE</span>
@@ -93,7 +169,7 @@
         </div>
 
         <div class="card-container">
-            <!-- Card 1: Lịch trình -->
+            <!-- 1. Lịch trình -->
             <a href="pages/schedule.html" class="card card-schedule">
                 <div class="card-top">
                     <div class="icon-wrapper">📅</div>
@@ -107,21 +183,7 @@
                 </div>
             </a>
 
-            <!-- Card 2: Confession -->
-            <a href="pages/confession.html" class="card card-cfs">
-                <div class="card-top">
-                    <div class="icon-wrapper">💌</div>
-                    <span class="card-tag tag-pink">Ẩn danh 100%</span>
-                </div>
-                <h3>Góc Confession</h3>
-                <p>Gửi những lời chúc, cảm nhận hoặc sẻ chia tâm tư gửi đến bạn bè & BTC.</p>
-                <div class="card-footer">
-                    <span>Gửi tâm sự ngay</span>
-                    <span class="arrow">→</span>
-                </div>
-            </a>
-
-            <!-- Card 3: Groups -->
+            <!-- 2. Danh sách nhóm -->
             <a href="pages/groups.html" class="card card-groups">
                 <div class="card-top">
                     <div class="icon-wrapper">⛺</div>
@@ -135,7 +197,7 @@
                 </div>
             </a>
 
-            <!-- Card 4: Sắp xếp phòng -->
+            <!-- 3. Sắp xếp phòng -->
             <a href="pages/room.html" class="card card-room">
                 <div class="card-top">
                     <div class="icon-wrapper">🛏️</div>
@@ -149,7 +211,21 @@
                 </div>
             </a>
 
-            <!-- Card 5: Khoảnh khắc -->
+            <!-- 4. Confession -->
+            <a href="pages/confession.html" class="card card-cfs">
+                <div class="card-top">
+                    <div class="icon-wrapper">💌</div>
+                    <span class="card-tag tag-pink">Ẩn danh 100%</span>
+                </div>
+                <h3>Góc Confession</h3>
+                <p>Gửi những lời chúc, cảm nhận hoặc sẻ chia tâm tư gửi đến bạn bè & BTC.</p>
+                <div class="card-footer">
+                    <span>Gửi tâm sự ngay</span>
+                    <span class="arrow">→</span>
+                </div>
+            </a>
+
+            <!-- 5. Khoảnh khắc -->
             <a href="pages/gallery.html" class="card card-gallery">
                 <div class="card-top">
                     <div class="icon-wrapper">📸</div>
@@ -163,7 +239,7 @@
                 </div>
             </a>
 
-            <!-- Card 6: BTC -->
+            <!-- 6. BTC -->
             <a href="pages/btc.html" class="card card-btc">
                 <div class="card-top">
                     <div class="icon-wrapper">📞</div>
@@ -179,7 +255,7 @@
         </div>
     </section>
 
-    <!-- Countdown Section -->
+    <!-- Countdown Section (Ghim ở góc dưới màn hình) -->
     <div class="sticky-countdown mode-normal" id="stickyCountdown">
         <div class="btc-badge">
             <span class="badge-icon">⚡</span>
@@ -208,15 +284,6 @@
                     <small>giây</small>
                 </div>
             </div>
-
-            <!-- Thanh tiến độ đếm ngược -->
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div class="progress-info">
-                <span>Tiến độ hành trình Trại:</span>
-                <strong id="progressPercent">0%</strong>
-            </div>
         </div>
 
         <div class="welcome-message" id="welcomeMessage" style="display: none;">
@@ -228,46 +295,16 @@
         <p>Designed & Developed by Diệp Đoan Trinh</p>
     </footer>
 
-    <!-- Popup Chọn Tên Dành Cho BĐH -->
-    <div id="userModal" class="user-modal-overlay">
-        <div class="user-modal-box glass">
-            <div class="user-icon">👑</div>
-            <h2>Chào BĐH!</h2>
-            <p>Chọn tên rồi vào trang nha, danh sách BĐH như sau:</p>
-
-            <select id="userSelect" class="user-select-input">
-                <option value="">-- Chọn tên của bạn --</option>
-                <option value="Huỳnh Nhật Tín">Huỳnh Nhật Tín</option>
-                <option value="Nguyễn Ngọc Tường Vy">Nguyễn Ngọc Tường Vy</option>
-                <option value="Võ Nguyễn Minh Trung">Võ Nguyễn Minh Trung</option>
-                <option value="Dương Thị Luyến">Dương Thị Luyến</option>
-                <option value="Diệp Đoan Trinh">Diệp Đoan Trinh</option>
-                <option value="Chống Hoàng Mỹ Hằng">Chống Hoàng Mỹ Hằng</option>
-                <option value="Nguyễn Trần Phú Bình">Nguyễn Trần Phú Bình</option>
-                <option value="Kră Jăn Na Tha Na Êl">Kră Jăn Na Tha Na Êl</option>
-                <option value="Nguyễn Hoàng Giáng Ân">Nguyễn Hoàng Giáng Ân</option>
-                <option value="Đào Linh An">Đào Linh An</option>
-                <option value="Võ Quỳnh Hương">Võ Quỳnh Hương</option>
-                <option value="Hoàng Văn Long">Hoàng Văn Long</option>
-            </select>
-
-            <button type="button" class="save-user-btn" onclick="saveUserIdentity()">🚀 Vào trang ngay</button>
-        </div>
-    </div>
-
     <script>
         // ----------------------------------------------------
         // 1. CẤU HÌNH THỜI GIAN & ĐẾM NGƯỢC
         // ----------------------------------------------------
-        const startDate = new Date("June 01, 2026 00:00:00").getTime();
         const targetDate = new Date("August 30, 2026 11:00:00").getTime();
 
         const btcQuotes = [
-            "⚡ BTC ĐANG RÁO RIẾT CHUẨN BỊ!",
-            "🔥 TRẠI SINH ĐÃ SẴN SÀNG CHƯA?",
-            "⏳ THỜI GIAN KHÔNG CHỜ MỘT AI!",
-            "🛠️ KIỂM TRA ĐẠO CỤ & KỊCH BẢN CHƯA BTC ÔI?",
-            "💥 BÙNG NỔ TẬN CÙNG CÙNG NGỜ YÊN NGHIÊNG!"
+            "🥰 BTC ĐANG RẤT HÁO HỨC CHỜ ĐÓN BẠN!",
+            "❤️ MỖI BẠN LÀ MỘT MẢNH GHÉP KHÔNG THỂ THIẾU!",
+            "💥 HẾT MÌNH VÀ BÙNG NỔ CÙNG NGỜ YÊN NGHIÊNG!"
         ];
 
         let currentQuoteIndex = 0;
@@ -306,17 +343,6 @@
             if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
             if (minsEl) minsEl.textContent = String(minutes).padStart(2, '0');
             if (secsEl) secsEl.textContent = String(seconds).padStart(2, '0');
-
-            const totalDuration = targetDate - startDate;
-            const elapsed = now - startDate;
-            let percentage = Math.floor((elapsed / totalDuration) * 100);
-            percentage = Math.max(0, Math.min(100, percentage));
-
-            const progressBar = document.getElementById("progressBar");
-            const progressPercent = document.getElementById("progressPercent");
-
-            if (progressBar) progressBar.style.width = percentage + "%";
-            if (progressPercent) progressPercent.textContent = percentage + "%";
 
             if (stickyBlock) {
                 if (days < 1) {
@@ -446,64 +472,6 @@
                     .then(reg => console.log('SW đã đăng ký thành công!'))
                     .catch(err => console.log('Lỗi đăng ký SW:', err));
             });
-        }
-
-        // ----------------------------------------------------
-        // 4. BĐH IDENTIFICATION & GOOGLE SHEETS LOGGING
-        // ----------------------------------------------------
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZhROAQusdPvR5H31bsjBCowS69aYzUJDAIc1SxIpi5oG4ZMhyRe4D6yJvdShA6ddEMQ/exec";
-
-        const campGroupData = {
-            "Nhóm 1": ["Nguyễn Đào Xuân Bách (Trưởng nhóm)", "Diệp Đoan Trinh"],
-            "Nhóm 2": ["Nguyễn Thị Tường Vy (Trưởng nhóm)", "Huỳnh Nhật Tín"],
-        };
-
-        document.addEventListener("DOMContentLoaded", () => {
-            checkUserIdentity();
-        });
-
-        function checkUserIdentity() {
-            const savedUser = localStorage.getItem("camp_user_name");
-
-            if (!savedUser) {
-                const modal = document.getElementById("userModal");
-                if (modal) modal.style.display = "flex";
-            } else {
-                logUserVisit(savedUser);
-            }
-        }
-
-        function saveUserIdentity() {
-            const userSelect = document.getElementById("userSelect");
-
-            if (!userSelect || !userSelect.value) {
-                alert("Vui lòng chọn đúng tên của bạn trong danh sách BĐH!");
-                return;
-            }
-
-            const selectedName = userSelect.value;
-
-            localStorage.setItem("camp_user_name", selectedName);
-
-            const modal = document.getElementById("userModal");
-            if (modal) modal.style.display = "none";
-
-            logUserVisit(selectedName);
-        }
-
-        function logUserVisit(userName) {
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "text/plain" },
-                body: JSON.stringify({
-                    action: "log_visit",
-                    userName: userName,
-                    device: navigator.userAgent.includes("Mobile") ? "Điện thoại" : "Máy tính"
-                })
-            })
-                .then(() => console.log("Ghi nhận truy cập thành công!"))
-                .catch(err => console.log("Lỗi ghi nhận truy cập:", err));
         }
     </script>
 </body>
