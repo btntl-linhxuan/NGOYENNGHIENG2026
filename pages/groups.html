@@ -117,6 +117,8 @@
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 22px;
             margin-top: 30px;
+            align-items: start !important;
+            /* Không kéo giãn chiều cao các thẻ ngắn */
         }
 
         .group-card {
@@ -127,7 +129,9 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
+            justify-content: flex-start !important;
+            /* Fix khoảng cách bị giãn */
             transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
 
@@ -155,14 +159,9 @@
             gap: 6px;
         }
 
-        .group-badge.badge-green { background-color: #2d5a27 !important; }
-        .group-badge.badge-red { background-color: #c62828 !important; }
-        .group-badge.badge-blue { background-color: #1565c0 !important; }
-        .group-badge.badge-orange { background-color: #ef6c00 !important; }
-        .group-badge.badge-purple { background-color: #6a1b9a !important; }
-        .group-badge.badge-yellow { background-color: #fbc02d !important; color: #222 !important; }
-        .group-badge.badge-pink { background-color: #d81b60 !important; }
-        .group-badge.badge-teal { background-color: #00838f !important; }
+        .group-badge.badge-green {
+            background-color: #2d5a27 !important;
+        }
 
         .group-badge .dot {
             width: 8px;
@@ -181,6 +180,7 @@
             border-radius: 12px;
         }
 
+        /* Khung Trưởng Nhóm - Nổi bật chính */
         .leader-box {
             background: linear-gradient(135deg, #fffdf0, #fff3cd);
             border: 1px solid #ffeeba;
@@ -192,11 +192,11 @@
         }
 
         .leader-box .crown {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
         }
 
         .leader-info .role {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             color: #856404;
             font-weight: 800;
@@ -205,11 +205,49 @@
         }
 
         .leader-info .name {
-            font-size: 1rem;
+            font-size: 0.98rem;
             color: #222222;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
+        /* Khung Phó Nhóm - Nhỏ gọn, nhã nhặn hơn */
+        .sub-leader-box {
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sub-leader-box .sub-icon {
+            font-size: 1.05rem;
+            opacity: 0.85;
+        }
+
+        .sub-leader-box .role {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #555;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            display: block;
+        }
+
+        .sub-leader-box .name {
+            font-size: 0.88rem;
+            color: #333;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Danh sách thành viên */
         .members-section h4 {
             font-size: 0.85rem;
             color: #2d5a27;
@@ -233,6 +271,29 @@
             font-size: 0.85rem;
             font-weight: 600;
             border: 1px solid rgba(45, 90, 39, 0.12);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Kiểu dáng riêng biệt cho Ban Điều Hành (BĐH) */
+        .chip.chip-bdh {
+            background: linear-gradient(135deg, #fff3cd, #ffecb3) !important;
+            color: #795548 !important;
+            border: 1px solid #ffe082 !important;
+            font-weight: 700 !important;
+        }
+
+        .bdh-badge {
+            background: #ef6c00;
+            color: #ffffff;
+            font-size: 0.62rem;
+            padding: 1px 5px;
+            border-radius: 8px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+            display: inline-block;
         }
 
         .loading-state,
@@ -272,21 +333,11 @@
     </header>
 
     <main class="container">
-        <!-- 🔴 KHI CHƯA CÔNG BỐ: Thẻ thông báo hiển thị -->
-        <!-- Khi công bố: Bạn XÓA toàn bộ thẻ div.coming-soon-box này -->
-        <div class="coming-soon-box glass text-center" style="padding: 50px 20px; margin-top: 30px;">
-            <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
-            <h2 style="color: #2d5a27; font-weight: 800;">THÔNG TIN SẼ ĐƯỢC CÔNG BỐ SAU</h2>
-            <p style="color: #555; margin-top: 8px;">Ban Tổ Chức đang hoàn thiện dữ liệu. Vui lòng quay lại sau nhé!</p>
-        </div>
-
-        <!-- 🟢 KHI CHƯA CÔNG BỐ: Nội dung chính tạm thời ẩn (style="display: none;") -->
-        <!-- Khi công bố: Xóa chữ style="display: none;" ở bên dưới -->
-        <div id="groupsContent" style="display: none;">
+        <div id="groupsContent">
             <section class="page-title glass text-center">
                 <span class="page-title-badge">⛺ CAMPING HUB</span>
                 <h1>Danh Sách Nhóm Trại 🏕️</h1>
-                <p>Tra cứu thông tin nhóm trại, trưởng nhóm và các đồng đội của bạn.</p>
+                <p>Tra cứu thông tin nhóm trại, trưởng nhóm, phó nhóm và các đồng đội của bạn.</p>
 
                 <div class="quick-stats">
                     <div class="stat-item">
@@ -343,7 +394,21 @@
             }
         });
 
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxylF4BAqUZ5TrtZ95lqZiYyn5nmpH8kERssQawOgsKp7b2aL3FYBGIZ0QQeXox5hOjuw/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxoBTVsdcmq_zRRfgUrFeSN2QlS51_7hq9Tcg3huT1gOgkCUOIutDlMFF3r_x-MWP2dYA/exec";
+
+        // Hàm kiểm tra và xử lý tên nhân sự có phải BĐH hay không
+        function formatPersonName(person) {
+            if (!person) return { name: 'Chưa phân công', isBdh: false };
+
+            let name = typeof person === 'object' ? (person.name || '') : String(person);
+            let isBdh = typeof person === 'object'
+                ? (person.isBdh || person.role === 'BĐH' || person.isBDH)
+                : (/\b(BĐH|BDH)\b/i.test(name));
+
+            // Loại bỏ các ký hiệu (BĐH) khỏi tên để hiển thị sạch sẽ
+            const cleanName = name.replace(/\s*[\(\[\{-]?\s*(BĐH|BDH)\s*[\)\]\}]?/gi, '').trim();
+            return { name: cleanName || name, isBdh };
+        }
 
         async function fetchGroupsData() {
             const grid = document.getElementById("groupsGrid");
@@ -366,12 +431,53 @@
                 document.getElementById("statGroups").textContent = data.length;
 
                 data.forEach((group, index) => {
-                    const memberCount = (group.members ? group.members.length : 0) + (group.leader ? 1 : 0);
+                    const leaderObj = formatPersonName(group.leader);
+                    const subLeaderRaw = group.subLeader || group.viceLeader || group.coLeader;
+                    const subLeaderObj = subLeaderRaw ? formatPersonName(subLeaderRaw) : null;
+
+                    const memberCount = (group.members ? group.members.length : 0)
+                        + (group.leader ? 1 : 0)
+                        + (subLeaderRaw ? 1 : 0);
+
                     totalCampers += memberCount;
 
+                    // Render danh sách thành viên
                     const membersHtml = group.members && group.members.length > 0
-                        ? group.members.map(m => `<span class="chip">${m}</span>`).join('')
+                        ? group.members.map(m => {
+                            const mObj = formatPersonName(m);
+                            if (mObj.isBdh) {
+                                return `<span class="chip chip-bdh" title="Ban Điều Hành">⭐ ${mObj.name} <span class="bdh-badge">BĐH</span></span>`;
+                            }
+                            return `<span class="chip">${mObj.name}</span>`;
+                        }).join('')
                         : '<span class="chip">Đang cập nhật...</span>';
+
+                    // HTML Trưởng nhóm
+                    const leaderBdhTag = leaderObj.isBdh ? `<span class="bdh-badge">BĐH</span>` : '';
+                    const leaderHtml = `
+                        <div class="leader-box">
+                            <span class="crown">👑</span>
+                            <div class="leader-info">
+                                <span class="role">Trưởng nhóm</span>
+                                <strong class="name">${leaderObj.name} ${leaderBdhTag}</strong>
+                            </div>
+                        </div>
+                    `;
+
+                    // HTML Phó nhóm (nhỏ gọn hơn)
+                    let subLeaderHtml = '';
+                    if (subLeaderObj) {
+                        const subBdhTag = subLeaderObj.isBdh ? `<span class="bdh-badge">BĐH</span>` : '';
+                        subLeaderHtml = `
+                            <div class="sub-leader-box">
+                                <span class="sub-icon">🥈</span>
+                                <div class="sub-leader-info">
+                                    <span class="role">Phó nhóm</span>
+                                    <strong class="name">${subLeaderObj.name} ${subBdhTag}</strong>
+                                </div>
+                            </div>
+                        `;
+                    }
 
                     const cardHtml = `
                         <div class="group-card" data-group="nhom-${index + 1}">
@@ -381,13 +487,10 @@
                                 </span>
                                 <span class="member-count">👥 ${memberCount} Thành viên</span>
                             </div>
-                            <div class="leader-box">
-                                <span class="crown">👑</span>
-                                <div class="leader-info">
-                                    <span class="role">Trưởng nhóm</span>
-                                    <strong class="name">${group.leader || 'Chưa phân công'}</strong>
-                                </div>
-                            </div>
+                            
+                            ${leaderHtml}
+                            ${subLeaderHtml}
+
                             <div class="members-section">
                                 <h4>Thành viên</h4>
                                 <div class="members-chips">
