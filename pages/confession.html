@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confession - NGỜ YÊN NGHIÊNG</title>
+    <title>Confession</title>
 
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" href="../images/icon.png">
@@ -15,14 +15,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="BTN LX">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
 
     <style>
-        /* Global Reset cho Radio Input để không bị dính CSS chung */
         input[type="radio"] {
             display: none !important;
         }
 
-        /* CSS Layout & Preview */
         .cfs-layout {
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
@@ -40,12 +39,16 @@
             border-radius: 16px;
             padding: 18px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-
-            /* VIỀN NÉT ĐỨT CỦA BẠN */
             border: 2px dashed #7cb342;
         }
 
-        /* Chế độ danh tính (Public / Anonymous Toggle) */
+        .cfs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            align-items: start;
+        }
+
         .identity-toggle {
             display: flex;
             gap: 12px;
@@ -83,7 +86,6 @@
             font-weight: 800;
         }
 
-        /* Pick Emoji Ẩn danh */
         .anon-avatar-picker {
             display: flex;
             gap: 10px;
@@ -113,7 +115,6 @@
             background: rgba(62, 107, 54, 0.15);
         }
 
-        /* Thanh đếm ký tự */
         .char-progress-bg {
             width: 100%;
             height: 6px;
@@ -131,7 +132,6 @@
             transition: width 0.2s ease, background-color 0.2s ease;
         }
 
-        /* Nút Gửi */
         .submit-btn {
             width: 100%;
             padding: 14px;
@@ -155,7 +155,6 @@
             box-shadow: 0 6px 16px rgba(33, 59, 26, 0.3);
         }
 
-        /* Nút thả tim */
         .action-btn.like-btn {
             background: #ffffff;
             border: 1.5px solid #ffccd5;
@@ -186,7 +185,6 @@
             box-shadow: 0 4px 14px rgba(255, 77, 109, 0.4);
         }
 
-        /* Toast thông báo */
         .toast-msg {
             position: fixed;
             bottom: 30px;
@@ -210,6 +208,194 @@
             opacity: 1;
         }
 
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.55);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 16px;
+            backdrop-filter: blur(6px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: #f1f5f9;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .comments-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-top: 1px solid #f0fdf4;
+            margin-top: 16px;
+            padding-top: 16px;
+        }
+
+        .comments-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-right: 6px;
+            max-height: 260px;
+        }
+
+        .comments-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .comments-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .comment-item {
+            background: #f4f8f3;
+            border: 1px solid #e2ece0;
+            border-radius: 18px;
+            border-top-left-radius: 4px;
+            padding: 10px 14px;
+            max-width: 88%;
+            align-self: flex-start;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            transition: transform 0.15s ease;
+        }
+
+        .comment-item:hover {
+            transform: translateX(2px);
+        }
+
+        .comment-item-user {
+            font-weight: 700;
+            color: #213b1a;
+            font-size: 0.82rem;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .comment-item-text {
+            color: #334155;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .comment-form {
+            display: flex;
+            align-items: center;
+            background: #f8faf7;
+            border: 1.5px solid #dce4d9;
+            border-radius: 30px;
+            padding: 4px 6px 4px 14px;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .comment-form:focus-within {
+            border-color: #3e6b36;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(62, 107, 54, 0.12);
+        }
+
+        .comment-form input {
+            border: none;
+            background: transparent;
+            font-size: 0.88rem;
+            outline: none;
+            color: #1e293b;
+        }
+
+        .comment-form .cmt-name {
+            width: 28%;
+            font-weight: 600;
+            color: #213b1a;
+            border-right: 1px solid #cbd5e1;
+            padding-right: 8px;
+            border-radius: 0;
+        }
+
+        .comment-form .cmt-text {
+            flex: 1;
+        }
+
+        .comment-form button {
+            background: #3e6b36;
+            color: #ffffff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .comment-form button:hover {
+            background: #213b1a;
+            transform: scale(1.03);
+        }
+
         @media (max-width: 850px) {
             .cfs-layout {
                 grid-template-columns: 1fr;
@@ -217,6 +403,29 @@
 
             .preview-section {
                 position: static;
+            }
+
+            .comment-form {
+                border-radius: 16px;
+                flex-wrap: wrap;
+                padding: 8px;
+            }
+
+            .comment-form .cmt-name {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+                padding-bottom: 6px;
+                padding-right: 0;
+            }
+
+            .comment-form .cmt-text {
+                width: 100%;
+            }
+
+            .comment-form button {
+                width: 100%;
+                border-radius: 10px;
             }
         }
     </style>
@@ -238,7 +447,9 @@
                 <a href="schedule.html">Lịch trình</a>
                 <a href="groups.html">Danh sách nhóm</a>
                 <a href="room.html">Sắp xếp phòng</a>
-                <a href="confession.html" class="active">Confession</a>
+                <a href="song.html">Bài hát trại</a>
+                <a href="vote.html">Bình chọn</a>
+                <a href="confession.html"class="active">Confession</a>
                 <a href="gallery.html">Khoảnh khắc</a>
                 <a href="btc.html">BTC</a>
             </div>
@@ -273,7 +484,7 @@
 
                 <div class="form-group" id="nameGroup">
                     <label for="name">Tên của bạn</label>
-                    <input type="text" id="name" placeholder="Nhập tên hoặc biệt danh..." required>
+                    <input type="text" id="name" placeholder="Nhập tên hoặc biệt danh..." maxlength="50" required>
                 </div>
 
                 <div class="form-group" id="anonAvatarGroup" style="display: none;">
@@ -334,7 +545,6 @@
             </div>
         </div>
 
-        <!-- Khung hiển thị danh sách Confession đã được BTC duyệt -->
         <section class="published-cfs-section" style="margin-top: 40px;">
             <h2 class="text-center" style="margin-bottom: 25px; color: #2d5a27;">💌 Lời Nhắn Đã Duyệt</h2>
 
@@ -351,13 +561,31 @@
                 </div>
             </div>
 
-            <div class="cfs-grid" id="cfsListContainer">
-                <!-- Các card confession được duyệt sẽ tự động render vào đây -->
-            </div>
+            <div class="cfs-grid" id="cfsListContainer"></div>
         </section>
     </main>
 
-    <!-- Toast Thông Báo -->
+    <div id="cfsModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCfsModal()">✕</button>
+            <div id="modalCfsDetail"></div>
+
+            <div class="comments-section">
+                <h4 style="margin-bottom: 10px; color: #2d5a27;">💬 Bình luận</h4>
+                <div id="commentsList" class="comments-list">
+                    <p style="color:#888; font-size: 0.85rem;">Chưa có bình luận nào. Hãy là người đầu tiên!</p>
+                </div>
+
+                <form id="commentForm" class="comment-form" onsubmit="handleSendComment(event)">
+                    <input type="text" id="cmtName" class="cmt-name" placeholder="Tên bạn..." maxlength="30" required>
+                    <input type="text" id="cmtMessage" class="cmt-text" placeholder="Viết bình luận..." maxlength="200"
+                        required>
+                    <button type="submit">Gửi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="toast-msg">💖 Confession của bạn đã được gửi thành công!</div>
 
     <footer>
@@ -365,23 +593,38 @@
     </footer>
 
     <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwK9Fs_PEFXXcHyH7h1DPxjNuKlIXnaPBjZdlZIiAeEd_ydjKB-yz-0f224P62ET1S6Lw/exec";
+        const scriptURL = "https://script.google.com/macros/s/AKfycbxxHKSy_fk5IUs-BXLnWcfUc3oIeRT8v_ZGeA7p7Zc1ZmWgAsGuEgHstVrw3XNyXWAqeg/exec";
+        let loadedConfessions = [];
+        let currentModalCfsId = null;
 
-        // 1. Quản lý Menu Mobile
+        const LAST_SUBMIT_KEY = "last_cfs_submit_time";
+        const COOLDOWN_MS = 60 * 1000;
+
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return "";
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         const toggle = document.querySelector(".menu-toggle");
         const menu = document.querySelector(".menu");
-        toggle.addEventListener("click", () => {
-            menu.classList.toggle("show");
-            toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
-        });
-        document.addEventListener("click", (e) => {
-            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
-                menu.classList.remove("show");
-                toggle.textContent = "☰";
-            }
-        });
+        if (toggle && menu) {
+            toggle.addEventListener("click", () => {
+                menu.classList.toggle("show");
+                toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
+            });
+            document.addEventListener("click", (e) => {
+                if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                    menu.classList.remove("show");
+                    toggle.textContent = "☰";
+                }
+            });
+        }
 
-        // 2. Logic Form & Live Preview
         const form = document.getElementById("confessionForm");
         const nameInput = document.getElementById("name");
         const messageInput = document.getElementById("message");
@@ -398,8 +641,10 @@
         const optAnon = document.getElementById("optAnon");
         let currentAnonAvatar = "🕵️";
 
-        optPublic.addEventListener("click", () => switchIdentity("name"));
-        optAnon.addEventListener("click", () => switchIdentity("anonymous"));
+        if (optPublic && optAnon) {
+            optPublic.addEventListener("click", () => switchIdentity("name"));
+            optAnon.addEventListener("click", () => switchIdentity("anonymous"));
+        }
 
         function switchIdentity(type) {
             if (type === "anonymous") {
@@ -431,71 +676,84 @@
             opt.addEventListener("click", function () {
                 document.querySelectorAll(".avatar-opt").forEach(o => o.classList.remove("active"));
                 this.classList.add("active");
-                currentAnonAvatar = this.dataset.avatar;
+                currentAnonAvatar = this.dataset.avatar || "🕵️";
                 pvAvatar.textContent = currentAnonAvatar;
             });
         });
 
-        nameInput.addEventListener("input", function () {
-            pvName.textContent = this.value.trim() || "Tên của bạn";
-        });
+        if (nameInput) {
+            nameInput.addEventListener("input", function () {
+                pvName.textContent = this.value.trim() || "Tên của bạn";
+            });
+        }
 
-        messageInput.addEventListener("input", function () {
-            const text = this.value;
-            const length = text.length;
-            charNum.textContent = length;
-            pvMessage.textContent = text.trim() || "Nội dung bài viết sẽ hiển thị ở đây khi bạn gõ...";
+        if (messageInput) {
+            messageInput.addEventListener("input", function () {
+                const text = this.value;
+                const length = text.length;
+                charNum.textContent = length;
+                pvMessage.textContent = text.trim() || "Nội dung bài viết sẽ hiển thị ở đây khi bạn gõ...";
 
-            const percentage = (length / 500) * 100;
-            progressBar.style.width = percentage + "%";
+                const percentage = (length / 500) * 100;
+                progressBar.style.width = percentage + "%";
 
-            if (percentage > 90) progressBar.style.backgroundColor = "#e53935";
-            else if (percentage > 70) progressBar.style.backgroundColor = "#fb8c00";
-            else progressBar.style.backgroundColor = "#4caf50";
-        });
+                if (percentage > 90) progressBar.style.backgroundColor = "#e53935";
+                else if (percentage > 70) progressBar.style.backgroundColor = "#fb8c00";
+                else progressBar.style.backgroundColor = "#4caf50";
+            });
+        }
 
-        // 3. Gửi Confession
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const submitBtn = form.querySelector('.submit-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerText = "⏳ Đang gửi...";
+        if (form) {
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
 
-            const identity = document.querySelector('input[name="identity"]:checked').value;
+                const lastSubmit = localStorage.getItem(LAST_SUBMIT_KEY);
+                if (lastSubmit && Date.now() - parseInt(lastSubmit, 10) < COOLDOWN_MS) {
+                    const remainSec = Math.ceil((COOLDOWN_MS - (Date.now() - parseInt(lastSubmit, 10))) / 1000);
+                    showToast(`⏳ Bạn gửi hơi nhanh! Vui lòng đợi ${remainSec}s nữa nhé.`);
+                    return;
+                }
 
-            const data = {
-                anonymous: identity === "anonymous",
-                name: identity === "anonymous" ? `Ẩn danh (${currentAnonAvatar})` : nameInput.value,
-                message: messageInput.value
-            };
+                const submitBtn = form.querySelector('.submit-btn');
+                submitBtn.disabled = true;
+                submitBtn.innerText = "⏳ Đang gửi...";
 
-            fetch(scriptURL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(data)
-            })
-                .then(() => {
-                    showToast("💖 Confession của bạn đã gửi thành công tới BTC!");
-                    form.reset();
-                    pvMessage.textContent = "Nội dung bài viết sẽ hiển thị ở đây khi bạn gõ...";
-                    pvName.textContent = "Tên của bạn";
-                    pvAvatar.textContent = "👤";
-                    charNum.textContent = "0";
-                    progressBar.style.width = "0%";
-                    switchIdentity("name");
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = "<span>💌 Gửi ngay cho BTC</span>";
+                const identity = document.querySelector('input[name="identity"]:checked').value;
+
+                const data = {
+                    anonymous: identity === "anonymous",
+                    name: identity === "anonymous" ? `Ẩn danh (${currentAnonAvatar})` : nameInput.value.trim(),
+                    message: messageInput.value.trim()
+                };
+
+                fetch(scriptURL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(data)
                 })
-                .catch(err => {
-                    console.error("Lỗi gửi bài:", err);
-                    showToast("⚠️ Có lỗi xảy ra, vui lòng thử lại!");
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = "<span>💌 Gửi ngay cho BTC</span>";
-                });
-        });
+                    .then(() => {
+                        localStorage.setItem(LAST_SUBMIT_KEY, Date.now().toString());
+                        showToast("💖 Confession của bạn đã gửi thành công! Hãy chờ BTC duyệt nhé.");
+                        form.reset();
+                        pvMessage.textContent = "Nội dung bài viết sẽ hiển thị ở đây khi bạn gõ...";
+                        pvName.textContent = "Tên của bạn";
+                        pvAvatar.textContent = "👤";
+                        charNum.textContent = "0";
+                        progressBar.style.width = "0%";
+                        switchIdentity("name");
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = "<span>💌 Gửi ngay cho BTC</span>";
+                    })
+                    .catch(err => {
+                        console.error("Lỗi gửi bài:", err);
+                        showToast("⚠️ Có lỗi xảy ra, vui lòng thử lại!");
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = "<span>💌 Gửi ngay cho BTC</span>";
+                    });
+            });
+        }
 
-        // 4. Tải danh sách Confession đã duyệt
         function loadApprovedConfessions() {
             const listContainer = document.getElementById("cfsListContainer");
             const loadingEl = document.getElementById("loadingCfs");
@@ -504,8 +762,9 @@
             fetch(`${scriptURL}?action=cfs`)
                 .then(response => response.json())
                 .then(data => {
-                    loadingEl.style.display = "none";
+                    if (loadingEl) loadingEl.style.display = "none";
                     listContainer.innerHTML = "";
+                    loadedConfessions = data || [];
 
                     if (!data || data.length === 0) {
                         listContainer.innerHTML = `<p class="text-center" style="color: #666; width: 100%;">Chưa có bài confession nào được duyệt.</p>`;
@@ -513,15 +772,15 @@
                     }
 
                     data.forEach((cfs, index) => {
-                        const cfId = cfs.id || `cfs-${index}`;
+                        const cfId = cfs.id || (index + 2);
                         const isLiked = likedList.includes(String(cfId));
 
-                        let displayLikes = cfs.likes || 0;
+                        let displayLikes = parseInt(cfs.likes, 10) || 0;
                         if (isLiked) displayLikes += 1;
 
                         const card = document.createElement("div");
                         card.className = "cfs-card-preview glass";
-                        card.style.marginBottom = "20px";
+                        card.style.cursor = "pointer";
 
                         let avatarIcon = "👤";
                         const anonEmojis = ["🕵️", "🐱", "🦊", "🧋", "🐼", "🥑"];
@@ -532,12 +791,14 @@
                             }
                         }
 
+                        card.onclick = () => openCfsModal(cfId, avatarIcon, cfs.name, cfs.time, cfs.message, data.length - index);
+
                         card.innerHTML = `
                             <div class="cfs-card-header" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                                <div class="avatar" style="font-size:1.5rem;">${avatarIcon}</div>
+                                <div class="avatar" style="font-size:1.5rem;">${escapeHtml(avatarIcon)}</div>
                                 <div class="user-meta" style="flex:1;">
                                     <strong style="display:block; font-size:1.05rem; color:#222;">${escapeHtml(cfs.name)}</strong>
-                                    <small style="color:#777;">${cfs.time || ''}</small>
+                                    <small style="color:#777;">${escapeHtml(cfs.time || '')}</small>
                                 </div>
                                 <span class="status-badge" style="background: rgba(76, 175, 80, 0.15); color: #2e7d32; padding:3px 8px; border-radius:12px; font-size:0.85rem; font-weight:600;">#${data.length - index}</span>
                             </div>
@@ -545,9 +806,9 @@
                                 <p style="color:#333; line-height:1.55; word-break:break-word;">${escapeHtml(cfs.message)}</p>
                             </div>
                             <div class="cfs-card-footer" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: flex-end;">
-                                <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" type="button" onclick="toggleLike('${cfId}')">
+                                <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" type="button" onclick="toggleLike(event, '${escapeHtml(cfId)}')">
                                     <span class="heart-icon">❤️</span> 
-                                    <span class="like-count" id="count-${cfId}">${displayLikes}</span>
+                                    <span class="like-count" id="count-${escapeHtml(cfId)}">${displayLikes}</span>
                                 </button>
                             </div>
                         `;
@@ -556,18 +817,18 @@
                 })
                 .catch(err => {
                     console.error("Lỗi tải confession:", err);
-                    loadingEl.textContent = "Không thể tải danh sách confession. Vui lòng thử lại sau!";
+                    if (loadingEl) loadingEl.textContent = "Không thể tải danh sách confession. Vui lòng thử lại sau!";
                 });
         }
 
-        // 5. Xử lý Thả Tim Confession & Đồng bộ về Server
-        function toggleLike(cfId) {
+        function toggleLike(e, cfId) {
+            e.stopPropagation();
             const countEl = document.getElementById(`count-${cfId}`);
             if (!countEl) return;
 
             const btn = countEl.closest('.like-btn');
             let likedList = JSON.parse(localStorage.getItem("liked_confessions") || "[]");
-            let currentCount = parseInt(countEl.textContent) || 0;
+            let currentCount = parseInt(countEl.textContent, 10) || 0;
             const strId = String(cfId);
             let actionType = "like";
 
@@ -582,11 +843,9 @@
                 btn.classList.add("liked");
             }
 
-            // Cập nhật giao diện & localStorage ngay lập tức
             countEl.textContent = currentCount;
             localStorage.setItem("liked_confessions", JSON.stringify(likedList));
 
-            // Gửi yêu cầu cập nhật tim thực về Google Sheet
             fetch(scriptURL, {
                 method: "POST",
                 mode: "no-cors",
@@ -599,15 +858,99 @@
             }).catch(err => console.error("Lỗi cập nhật tim CFS:", err));
         }
 
-        // 6. Helpers
-        function escapeHtml(text) {
-            if (!text) return "";
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+        function openCfsModal(cfId, avatar, name, time, message, badge) {
+            currentModalCfsId = cfId;
+            const detailContainer = document.getElementById("modalCfsDetail");
+            detailContainer.innerHTML = `
+                <div class="cfs-card-header" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                    <div class="avatar" style="font-size:1.6rem;">${escapeHtml(avatar)}</div>
+                    <div class="user-meta" style="flex:1;">
+                        <strong style="display:block; font-size:1.1rem; color:#222;">${escapeHtml(name)}</strong>
+                        <small style="color:#777;">${escapeHtml(time || '')}</small>
+                    </div>
+                    <span class="status-badge" style="background: rgba(76, 175, 80, 0.15); color: #2e7d32; padding:3px 8px; border-radius:12px; font-size:0.85rem; font-weight:600;">#${escapeHtml(badge)}</span>
+                </div>
+                <div class="cfs-card-body">
+                    <p style="color:#333; line-height:1.6; word-break:break-word; font-size:1rem;">${escapeHtml(message)}</p>
+                </div>
+            `;
+
+            document.getElementById("cfsModal").classList.add("active");
+            loadComments(cfId);
+        }
+
+        function closeCfsModal() {
+            document.getElementById("cfsModal").classList.remove("active");
+            currentModalCfsId = null;
+        }
+
+        function closeModalOnOverlay(e) {
+            if (e.target.id === "cfsModal") closeCfsModal();
+        }
+
+        function loadComments(cfId) {
+            const commentsList = document.getElementById("commentsList");
+            commentsList.innerHTML = `<p style="color:#888; font-size: 0.85rem;">⏳ Đang tải bình luận...</p>`;
+
+            fetch(`${scriptURL}?action=get_comments&cfsId=${encodeURIComponent(cfId)}`)
+                .then(res => res.json())
+                .then(comments => {
+                    commentsList.innerHTML = "";
+                    if (!comments || comments.length === 0) {
+                        commentsList.innerHTML = `<p style="color:#888; font-size: 0.85rem;">Chưa có bình luận nào. Hãy là người đầu tiên!</p>`;
+                        return;
+                    }
+
+                    comments.forEach(cmt => {
+                        const div = document.createElement("div");
+                        div.className = "comment-item";
+                        div.innerHTML = `
+                            <div class="comment-item-user">${escapeHtml(cmt.name)}</div>
+                            <div class="comment-item-text">${escapeHtml(cmt.message)}</div>
+                        `;
+                        commentsList.appendChild(div);
+                    });
+                })
+                .catch(() => {
+                    commentsList.innerHTML = `<p style="color:#888; font-size: 0.85rem;">Chưa có bình luận nào.</p>`;
+                });
+        }
+
+        function handleSendComment(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById("cmtName");
+            const msgInput = document.getElementById("cmtMessage");
+            const name = nameInput.value.trim();
+            const message = msgInput.value.trim();
+
+            if (!name || !message || !currentModalCfsId) return;
+
+            const commentsList = document.getElementById("commentsList");
+            const placeholder = commentsList.querySelector("p");
+            if (placeholder) placeholder.remove();
+
+            const div = document.createElement("div");
+            div.className = "comment-item";
+            div.innerHTML = `
+                <div class="comment-item-user">${escapeHtml(name)}</div>
+                <div class="comment-item-text">${escapeHtml(message)}</div>
+            `;
+            commentsList.appendChild(div);
+            commentsList.scrollTop = commentsList.scrollHeight;
+
+            msgInput.value = "";
+
+            fetch(scriptURL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({
+                    action: "add_comment",
+                    cfsId: currentModalCfsId,
+                    name: name,
+                    message: message
+                })
+            }).catch(err => console.error("Lỗi gửi bình luận:", err));
         }
 
         function showToast(message) {
@@ -620,16 +963,13 @@
 
         document.addEventListener("DOMContentLoaded", loadApprovedConfessions);
     </script>
-
-    <!-- 7. Service Worker -->
+    <script src="../tracker.js"></script>
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('../sw.js')
-                    .then(reg => console.log('SW đã đăng ký thành công!'))
-                    .catch(err => console.log('Lỗi đăng ký SW:', err));
-            });
-        }
+        window.addEventListener("load", () => {
+            if (typeof logPageVisit === "function") {
+                logPageVisit("Confession");
+            }
+        });
     </script>
 </body>
 
