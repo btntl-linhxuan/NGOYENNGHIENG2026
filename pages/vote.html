@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải Thưởng Làn Sóng Nghiêng</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../images/icon.png">
+    <link rel="apple-touch-icon" href="../images/icon.png">
+    <link rel="manifest" href="../manifest.json">
+
+    <meta name="theme-color" content="#123b8d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BTN LX">
+
+    <style>
+        .vote-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 22px;
+            border: 1.5px solid rgba(45, 90, 39, 0.2);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .vote-card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .vote-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .vote-icon {
+            font-size: 2.2rem;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 14px;
+            line-height: 1;
+        }
+
+        .vote-title h3 {
+            font-size: 1.15rem;
+            color: #2d5a27;
+            margin: 0;
+            font-weight: 800;
+        }
+
+        .vote-title p {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 4px 0 0 0;
+        }
+
+        .top-voted-badge {
+            background: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ffe0b2;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .top-voted-badge span {
+            color: #b71c1c;
+            font-weight: 800;
+        }
+
+        .vote-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .select-custom {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1.5px solid #ccc;
+            font-size: 0.95rem;
+            font-weight: 600;
+            outline: none;
+            background: #fff;
+            transition: border-color 0.2s ease;
+        }
+
+        .select-custom:focus {
+            border-color: #2d5a27;
+        }
+
+        .select-custom:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+            color: #555;
+        }
+
+        .btn-vote {
+            background: linear-gradient(135deg, #2d5a27, #4b783f);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(45, 90, 39, 0.25);
+        }
+
+        .btn-vote:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(45, 90, 39, 0.35);
+        }
+
+        .btn-vote:disabled {
+            background: #a5d6a7;
+            color: #2e7d32;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .vote-status {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1b5e20;
+            background: #e8f5e9;
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .voter-info-box {
+            background: linear-gradient(135deg, #fffdf0, #fff3cd);
+            border: 1px solid #ffeeba;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 25px;
+        }
+
+        .voter-info-box h3 {
+            margin: 0;
+            color: #856404;
+            font-size: 1.05rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="../images/logo.png" alt="NGỜ YÊN NGHIÊNG">
+                </a>
+            </div>
+
+            <button class="menu-toggle" aria-label="Toggle Navigation">☰</button>
+
+            <div class="menu">
+                <a href="../index.html">Home</a>
+                <a href="schedule.html">Lịch trình</a>
+                <a href="groups.html">Danh sách nhóm</a>
+                <a href="room.html">Sắp xếp phòng</a>
+                <a href="song.html">Bài hát trại</a>
+                <a href="vote.html" class="active">Bình chọn</a>
+                <a href="confession.html">Confession</a>
+                <a href="gallery.html">Khoảnh khắc</a>
+                <a href="btc.html">BTC</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="page-title glass text-center">
+            <span class="page-title-badge">👑 FINAL DAY AWARDS</span>
+            <h1>Giải Thưởng Làn Sóng Nghiêng 🏆</h1>
+            <p>Mỗi trại sinh chỉ bình chọn 1 lần duy nhất cho mỗi giải (không được tự chọn bản thân).</p>
+        </section>
+
+        <div class="voter-info-box">
+            <h3>👤 Người bình chọn: <span id="voterNameDisplay" style="color: #2d5a27; font-weight: 800;">Đang kiểm
+                    tra...</span></h3>
+            <p id="voterNote" style="font-size: 0.85rem; color: #666; margin: 4px 0 0 0;">Tên của bạn được tự động ghi
+                nhận từ hệ thống.</p>
+
+            <!-- Thêm nút Reset ở đây -->
+            <button onclick="resetMyVotes()"
+                style="margin-top: 10px; background: #d32f2f; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                🔄 Xoá lịch sử vote để chọn lại
+            </button>
+        </div>
+
+        <!-- Các Hạng Mục Bình Chọn -->
+        <div id="voteCategoriesGrid">
+
+            <!-- 1. Visual Gây Nghiêng -->
+            <div class="vote-card" data-category="Visual Gây Nghiêng">
+                <div class="vote-header">
+                    <span class="vote-icon">✨</span>
+                    <div class="vote-title">
+                        <h3>1. Visual Gây Nghiêng</h3>
+                        <p>Gương mặt thương hiệu xinh đẹp/điển trai đỉnh cao, làm ngã nghiêng mọi ánh nhìn trong kỳ
+                            trại!</p>
+                        <div class="top-voted-badge" id="top_Visual Gây Nghiêng">
+                            🔥 Đang dẫn đầu: <span>Đang cập nhật...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="vote-form">
+                    <select class="select-custom member-select">
+                        <option value="">-- Chọn Trại Sinh --</option>
+                    </select>
+                    <button class="btn-vote" onclick="submitVote('Visual Gây Nghiêng')">🗳️ Bình Chọn Hạng Mục
+                        Này</button>
+                    <div class="vote-status" id="status_Visual Gây Nghiêng" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- 2. Đại Sứ Thời Trang -->
+            <div class="vote-card" data-category="Đại Sứ Thời Trang">
+                <div class="vote-header">
+                    <span class="vote-icon">👗</span>
+                    <div class="vote-title">
+                        <h3>2. Đại Sứ Thời Trang</h3>
+                        <p>Trại sinh sở hữu phong cách ăn mặc ấn tượng, gu thời trang độc lạ và nổi bật nhất trại!</p>
+                        <div class="top-voted-badge" id="top_Đại Sứ Thời Trang">
+                            🔥 Đang dẫn đầu: <span>Đang cập nhật...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="vote-form">
+                    <select class="select-custom member-select">
+                        <option value="">-- Chọn Trại Sinh --</option>
+                    </select>
+                    <button class="btn-vote" onclick="submitVote('Đại Sứ Thời Trang')">🗳️ Bình Chọn Hạng Mục
+                        Này</button>
+                    <div class="vote-status" id="status_Đại Sứ Thời Trang" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- 3. Mầm Non Giải Trí -->
+            <div class="vote-card" data-category="Mầm Non Giải Trí">
+                <div class="vote-header">
+                    <span class="vote-icon">🤡</span>
+                    <div class="vote-title">
+                        <h3>3. Mầm Non Giải Trí</h3>
+                        <p>Cây hài mới nổi của trại, quẩy hết mình, mở miệng phát ngôn câu nào là tạo mảng miếng gây
+                            cười câu đó!</p>
+                        <div class="top-voted-badge" id="top_Mầm Non Giải Trí">
+                            🔥 Đang dẫn đầu: <span>Đang cập nhật...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="vote-form">
+                    <select class="select-custom member-select">
+                        <option value="">-- Chọn Trại Sinh --</option>
+                    </select>
+                    <button class="btn-vote" onclick="submitVote('Mầm Non Giải Trí')">🗳️ Bình Chọn Hạng Mục
+                        Này</button>
+                    <div class="vote-status" id="status_Mầm Non Giải Trí" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- 4. Chiến Thần Chơi Dơ -->
+            <div class="vote-card" data-category="Chiến Thần Chơi Dơ">
+                <div class="vote-header">
+                    <span class="vote-icon">😈</span>
+                    <div class="vote-title">
+                        <h3>4. Chiến Thần Chơi Dơ</h3>
+                        <p>Bất chấp hình tượng để giành chiến thắng, sẵn sàng tung muôn vàn chiêu trò độc lạ và lăn xả
+                            hết mình!</p>
+                        <div class="top-voted-badge" id="top_Chiến Thần Chơi Dơ">
+                            🔥 Đang dẫn đầu: <span>Đang cập nhật...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="vote-form">
+                    <select class="select-custom member-select">
+                        <option value="">-- Chọn Trại Sinh --</option>
+                    </select>
+                    <button class="btn-vote" onclick="submitVote('Chiến Thần Chơi Dơ')">🗳️ Bình Chọn Hạng Mục
+                        Này</button>
+                    <div class="vote-status" id="status_Chiến Thần Chơi Dơ" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- 5. Đại Sứ Ngoại Giao -->
+            <div class="vote-card" data-category="Đại Sứ Ngoại Giao">
+                <div class="vote-header">
+                    <span class="vote-icon">🤝</span>
+                    <div class="vote-title">
+                        <h3>5. Đại Sứ Ngoại Giao</h3>
+                        <p>Thánh xã giao thân thiện, bắt chuyện siêu đỉnh, giao lưu kết nối khắp các nhóm, đi tới đâu
+                            quen tới đó!</p>
+                        <div class="top-voted-badge" id="top_Đại Sứ Ngoại Giao">
+                            🔥 Đang dẫn đầu: <span>Đang cập nhật...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="vote-form">
+                    <select class="select-custom member-select">
+                        <option value="">-- Chọn Trại Sinh --</option>
+                    </select>
+                    <button class="btn-vote" onclick="submitVote('Đại Sứ Ngoại Giao')">🗳️ Bình Chọn Hạng Mục
+                        Này</button>
+                    <div class="vote-status" id="status_Đại Sứ Ngoại Giao" style="display:none;"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>Designed & Developed by Diệp Đoan Trinh</p>
+    </footer>
+
+    <script>
+        const toggle = document.querySelector(".menu-toggle");
+        const menu = document.querySelector(".menu");
+        if (toggle && menu) {
+            toggle.addEventListener("click", () => {
+                menu.classList.toggle("show");
+                toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
+            });
+        }
+
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYbjBGWehitNNZPagmqhxMdi6Ns3bkJmAwZgpy1X7D3y-FX6h-0sUmrYpRCkop2s58Og/exec";
+
+        let localVotes = JSON.parse(localStorage.getItem("camp_votes") || "{}");
+
+        function getSavedVoterName() {
+            return localStorage.getItem("camp_user_name") ||
+                localStorage.getItem("user_name") ||
+                localStorage.getItem("userName") ||
+                localStorage.getItem("voter_name") || "";
+        }
+
+        function cleanName(str) {
+            return String(str || "").replace(/\s*[\(\[\{-]?\s*(BĐH|BDH)\s*[\)\]\}]?/gi, '').trim();
+        }
+
+        function initVoterInfo() {
+            const voterName = getSavedVoterName();
+            const displayElem = document.getElementById("voterNameDisplay");
+            const noteElem = document.getElementById("voterNote");
+
+            if (voterName) {
+                displayElem.textContent = voterName;
+            } else {
+                displayElem.textContent = "Chưa xác định";
+                displayElem.style.color = "#d32f2f";
+                noteElem.textContent = "⚠️ Không tìm thấy tên của bạn từ trang chủ. Vui lòng quay lại Trang chủ để chọn/nhập tên!";
+            }
+        }
+
+        async function loadNominees() {
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=groups`);
+                const data = await res.json();
+
+                const voterName = cleanName(getSavedVoterName()).toLowerCase();
+                const memberSelects = document.querySelectorAll(".member-select");
+                let allMembers = [];
+
+                if (Array.isArray(data)) {
+                    data.forEach(item => {
+                        if (typeof item === "string") {
+                            allMembers.push(cleanName(item));
+                        } else if (item.members && Array.isArray(item.members)) {
+                            item.members.forEach(m => allMembers.push(cleanName(m)));
+                        } else if (item.name) {
+                            allMembers.push(cleanName(item.name));
+                        }
+                        if (item.leader) allMembers.push(cleanName(item.leader));
+                        if (item.subLeader) allMembers.push(cleanName(item.subLeader));
+                    });
+                }
+
+                allMembers = [...new Set(allMembers)].filter(n => n.length > 0).sort();
+
+                memberSelects.forEach(sel => {
+                    sel.innerHTML = '<option value="">-- Chọn Trại Sinh --</option>';
+                    allMembers.forEach(name => {
+                        if (voterName && cleanName(name).toLowerCase() === voterName) {
+                            return; // Loại bản thân ra khỏi dropdown
+                        }
+                        const opt = document.createElement("option");
+                        opt.value = name;
+                        opt.textContent = name;
+                        sel.appendChild(opt);
+                    });
+                });
+
+                restoreUserVotes();
+                loadTopVotes();
+            } catch (err) {
+                console.error("Lỗi tải danh sách trại sinh:", err);
+            }
+        }
+
+        async function loadTopVotes() {
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=get_top_votes`);
+                const result = await res.json();
+
+                if (result.status === "success" && result.data) {
+                    for (let cat in result.data) {
+                        const topBox = document.getElementById(`top_${cat}`);
+                        if (topBox) {
+                            const info = result.data[cat];
+                            const span = topBox.querySelector("span");
+                            if (span) {
+                                if (info.topCandidate && info.votes > 0) {
+                                    span.textContent = `${info.topCandidate} (${info.votes} vote)`;
+                                } else {
+                                    span.textContent = "Chưa có lượt vote nào";
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Lỗi tải người dẫn đầu:", err);
+            }
+        }
+
+        function restoreUserVotes() {
+            initVoterInfo();
+
+            for (let category in localVotes) {
+                const card = document.querySelector(`.vote-card[data-category="${category}"]`);
+                if (card) {
+                    const select = card.querySelector("select");
+                    const btn = card.querySelector("button");
+
+                    if (select) {
+                        select.value = localVotes[category];
+                        select.disabled = true;
+                    }
+
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.textContent = "🔒 Đã Bình Chọn";
+                    }
+
+                    const status = document.getElementById(`status_${category}`);
+                    if (status) {
+                        status.style.display = "inline-block";
+                        status.textContent = `✅ Đã chọn: ${localVotes[category]}`;
+                    }
+                }
+            }
+        }
+
+        async function submitVote(category) {
+            const voterName = getSavedVoterName();
+            if (!voterName) {
+                alert("⚠️ Không tìm thấy tên người bình chọn! Vui lòng quay lại Trang chủ để chọn hoặc nhập tên trước khi vote.");
+                return;
+            }
+
+            if (localVotes[category]) {
+                alert("⚠️ Bạn đã bình chọn cho hạng mục này rồi!");
+                return;
+            }
+
+            const card = document.querySelector(`.vote-card[data-category="${category}"]`);
+            const select = card.querySelector("select");
+            const btn = card.querySelector("button");
+            const targetValue = select.value;
+
+            if (!targetValue) {
+                alert("⚠️ Vui lòng chọn 1 ứng viên!");
+                return;
+            }
+
+            if (cleanName(voterName).toLowerCase() === cleanName(targetValue).toLowerCase()) {
+                alert("⚠️ Bạn không thể tự bình chọn cho chính bản thân mình!");
+                return;
+            }
+
+            localVotes[category] = targetValue;
+            localStorage.setItem("camp_votes", JSON.stringify(localVotes));
+
+            select.disabled = true;
+            btn.disabled = true;
+            btn.textContent = "🔒 Đã Bình Chọn";
+
+            const status = document.getElementById(`status_${category}`);
+            status.style.display = "inline-block";
+            status.textContent = "⌛ Đang ghi nhận vote...";
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "submit_vote",
+                        voterName: voterName,
+                        category: category,
+                        target: targetValue
+                    })
+                });
+
+                status.textContent = `✅ Đã chọn: ${targetValue}`;
+                alert("🎉 Đã lưu lượt bình chọn thành công!");
+                loadTopVotes(); // Cập nhật lại danh sách TOP 1 ngay lập tức
+            } catch (e) {
+                status.textContent = `✅ Đã chọn: ${targetValue}`;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadNominees);
+    </script>
+    <script src="../tracker.js"></script>
+    <script>
+        window.addEventListener("load", () => {
+            if (typeof logPageVisit === "function") {
+                logPageVisit("Bình chọn");
+            }
+        });
+
+        function resetMyVotes() {
+            if (confirm("Bạn có chắc muốn xoá dữ liệu vote cũ trên máy này để bình chọn lại?")) {
+                localStorage.removeItem("camp_votes");
+                location.reload();
+            }
+        }
+    </script>
+</body>
+
+</html>

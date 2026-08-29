@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Hát Trại - NGỜ YÊN NGHIÊNG</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../images/icon.png">
+    <link rel="apple-touch-icon" href="../images/icon.png">
+    <link rel="manifest" href="../manifest.json">
+
+    <meta name="theme-color" content="#123b8d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BTN LX">
+
+    <style>
+        .song-page-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 15px;
+        }
+
+        /* Lưới 2 cột cho Audio và Video */
+        .song-top-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .song-top-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Thẻ chung */
+        .song-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 24px;
+        }
+
+        /* Card 1: Player Audio */
+        .audio-card {
+            align-items: center;
+            text-align: center;
+        }
+
+        .music-cover {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 20px rgba(30, 60, 114, 0.25);
+            border: 3px solid #2a5298;
+            background: #ffffff;
+        }
+
+        .music-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .song-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .song-artist {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .audio-player {
+            width: 100%;
+            border-radius: 30px;
+            margin-top: auto;
+            outline: none;
+        }
+
+        /* Card 2: Video YouTube */
+        .video-card-header {
+            margin-bottom: 14px;
+        }
+
+        .video-card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #d32f2f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            /* Tỉ lệ 16:9 */
+            height: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            margin-top: auto;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Lời bài hát */
+        .lyrics-header {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #4c7840;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lyrics-box {
+            background: #f8fafc;
+            padding: 20px 24px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            line-height: 1.8;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+
+        .lyrics-section-tag {
+            font-weight: 800;
+            color: #1e3c72;
+            margin-top: 16px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            font-size: 0.88rem;
+            letter-spacing: 0.5px;
+        }
+
+        .lyrics-section-tag:first-child {
+            margin-top: 0;
+        }
+
+        /* Sheet Nhạc Trải Dọc */
+        .sheet-header {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .sheet-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            background: #fdfdfd;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px dashed rgba(0, 0, 0, 0.1);
+        }
+
+        .sheet-img {
+            width: 100%;
+            max-width: 850px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            object-fit: contain;
+        }
+
+        .download-sheet-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #123b8d;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .download-sheet-btn:hover {
+            background: #1e3c72;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="../images/logo.png" alt="NGỜ YÊN NGHIÊNG">
+                </a>
+            </div>
+
+            <button class="menu-toggle" type="button" aria-label="Toggle Navigation">☰</button>
+
+            <div class="menu">
+                <a href="../index.html">Home</a>
+                <a href="schedule.html">Lịch trình</a>
+                <a href="groups.html">Danh sách nhóm</a>
+                <a href="room.html">Sắp xếp phòng</a>
+                <a href="song.html" class="active">Bài hát trại</a>
+                <a href="vote.html">Bình chọn</a>
+                <a href="confession.html">Confession</a>
+                <a href="gallery.html">Khoảnh khắc</a>
+                <a href="btc.html">BTC</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="page-title glass text-center">
+            <span class="page-title-badge">🎶 NGHIÊNG THEO GIAI ĐIỆU</span>
+            <h1>Bài Hát Trại</h1>
+            <p>Nghiêng tai lắng nghe những giai điệu xanh</p>
+        </section>
+
+        <!-- Khung 2 cột Audio & Video -->
+        <div class="song-top-grid">
+            <!-- Cột trái: Player Nhạc -->
+            <div class="song-card audio-card" style="margin-bottom: 0;">
+                <div class="music-cover">
+                    <img src="../images/icon.png" alt="NGỜ YÊN NGHIÊNG Icon">
+                </div>
+                <div class="song-title">Nương Theo Chúa</div>
+                <div class="song-artist">
+                    <strong>Lời bài hát:</strong> Giáng Ân<br>
+                    <strong>Trình bày:</strong> Hồng Ân, Nhật Hạ, Hiếu Kha<br>
+                    <strong>Hòa âm & Phối khí:</strong> Hiếu Kha
+                </div>
+
+                <audio class="audio-player" controls>
+                    <source src="../audio/NUONG THEO NGAI - MASTER OK 3.wav" type="audio/wav">
+                    Trình duyệt của bạn không hỗ trợ phát âm thanh.
+                </audio>
+            </div>
+
+            <!-- Cột phải: Video YouTube -->
+            <div class="song-card" style="margin-bottom: 0;">
+                <div class="video-card-header">
+                    <div class="video-card-title">▶ Video Bài Hát Trại</div>
+                </div>
+                <div class="video-container">
+                    <!-- Đã sửa URL Embed đúng định dạng YouTube -->
+                    <iframe src="https://www.youtube.com/embed/f3C_xZteVHY" title="Video bài hát trại"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Khung Lời Bài Hát -->
+        <div class="song-card">
+            <div class="lyrics-header">
+                📜 Lời Bài Hát: Nương Theo Chúa
+            </div>
+            <div class="lyrics-box">
+                <div class="lyrics-section-tag">Lời 1:</div>
+                Mỗi phút giây mệt nhoài, màn đêm bủa vây nơi lòng con<br>
+                Còn bao vết thương nặng nề, hằn những nỗi lo âu nghi ngờ<br>
+                Mọi thách thức vây quanh tràn dâng, đem lòng con luôn cách xa bóng Ngài<br>
+                Màn đêm tối trong con, nguyện Chúa soi đường ngay
+
+                <div class="lyrics-section-tag">Điệp khúc:</div>
+                Trọn dâng hết tâm con, nương cậy trông vào lời Ngài<br>
+                Tại nơi sâu thẳm này, con lặng yên nghe tiếng Cha<br>
+                Lời Cha dẫn lối, đưa đường con quay trở về gần bên Chúa<br>
+                Dù yếu đuối lo âu, luôn hằn sâu trong tâm con<br>
+                Ngài nghiêng tai lắng nghe, con cầu xin Cha thứ tha!<br>
+                Bởi ơn thiêng lớn sâu rộng thay, lòng con quyết nương theo Ngài thôi
+
+                <div class="lyrics-section-tag">DẠO</div>
+
+                <div class="lyrics-section-tag">Lời 2:</div>
+                Theo bước chân nơi Cha, lặng nghe tiếng Chúa bên tai dạy khuyên<br>
+                Chìm trong những tháng ngày dài, Ngài uốn nắn đổi thay tâm con<br>
+                Mọi thách thức vây quanh tràn dâng, Cha hằng chăm xem đỡ nâng dắt dìu<br>
+                Lòng con quyết tin nương cậy Chúa, soi đường ngay
+
+                <div class="lyrics-section-tag">Điệp khúc:</div>
+                Trọn dâng hết tâm con, nương cậy trông vào lời Ngài<br>
+                Tại nơi sâu thẳm này, con lặng yên nghe tiếng Cha<br>
+                Lời Cha dẫn lối, đưa đường con quay trở về gần bên Chúa<br>
+                Dù yếu đuối lo âu, luôn hằn sâu trong tâm con<br>
+                Ngài nghiêng tai lắng nghe, con cầu xin Cha thứ tha!<br>
+                Bởi ơn thiêng lớn sâu rộng thay, lòng con quyết nương theo Ngài thôi
+
+                <div class="lyrics-section-tag">Bridge:</div>
+                Lòng chăm xem bao nguy nan, chẳng nhìn xa vua Giê-xu<br>
+                Chìm vào sâu nơi đêm đen, cách xa Ngài<br>
+                Nguồn tình yêu Cha bao la, Ngài tìm con qua màn đêm<br>
+                Dìu con đi qua chông gai, nương theo Chúa.
+
+                <div class="lyrics-section-tag">Điệp khúc:</div>
+                Trọn dâng hết tâm con, nương cậy trông vào lời Ngài<br>
+                Tại nơi sâu thẳm này, con lặng yên nghe tiếng Cha<br>
+                Lời Cha dẫn lối, đưa đường con quay trở về gần bên Chúa<br>
+                Dù yếu đuối lo âu, luôn hằn sâu trong tâm con<br>
+                Ngài nghiêng tai lắng nghe, con cầu xin Cha thứ tha!<br>
+                Bởi ơn thiêng lớn sâu rộng thay, lòng con quyết nương theo Ngài thôi.
+            </div>
+        </div>
+
+        <!-- Khung Sheet Nhạc Trải Dọc 3 Trang -->
+        <div class="song-card">
+            <div class="sheet-header">
+                <span>🎼 Sheet Nhạc Bài Hát (3 Trang)</span>
+                <a href="../images/Nương theo Ngài.pdf" download class="download-sheet-btn">
+                    📥 Tải File PDF Sheet Nhạc
+                </a>
+            </div>
+            <div class="sheet-container">
+                <img src="../images/sheet/1.png" alt="Sheet nhạc Nương Theo Ngài - Trang 1" class="sheet-img">
+                <img src="../images/sheet/2.png" alt="Sheet nhạc Nương Theo Ngài - Trang 2" class="sheet-img">
+                <img src="../images/sheet/3.png" alt="Sheet nhạc Nương Theo Ngài - Trang 3" class="sheet-img">
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Designed & Developed by Diệp Đoan Trinh</p>
+    </footer>
+
+    <script>
+        // Toggle Menu Mobile
+        const toggle = document.querySelector(".menu-toggle");
+        const menu = document.querySelector(".menu");
+
+        if (toggle && menu) {
+            toggle.addEventListener("click", () => {
+                menu.classList.toggle("show");
+                toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                    menu.classList.remove("show");
+                    toggle.textContent = "☰";
+                }
+            });
+        }
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(reg => console.log('SW đã đăng ký thành công!'))
+                    .catch(err => console.log('Lỗi đăng ký SW:', err));
+            });
+        }
+    </script>
+    <script src="../tracker.js"></script>
+    <script>
+        window.addEventListener("load", () => {
+            if (typeof logPageVisit === "function") {
+                logPageVisit("Bài hát trại");
+            }
+        });
+    </script>
+</body>
+
+</html>
