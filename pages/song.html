@@ -23,20 +23,6 @@
             padding: 20px 15px;
         }
 
-        /* Lưới 2 cột cho Audio và Video */
-        .song-top-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        @media (min-width: 768px) {
-            .song-top-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
         /* Thẻ chung */
         .song-card {
             background: #ffffff;
@@ -49,54 +35,7 @@
             margin-bottom: 24px;
         }
 
-        /* Card 1: Player Audio */
-        .audio-card {
-            align-items: center;
-            text-align: center;
-        }
-
-        .music-cover {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-            box-shadow: 0 8px 20px rgba(30, 60, 114, 0.25);
-            border: 3px solid #2a5298;
-            background: #ffffff;
-        }
-
-        .music-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .song-title {
-            font-size: 1.35rem;
-            font-weight: 800;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .song-artist {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 18px;
-            line-height: 1.5;
-        }
-
-        .audio-player {
-            width: 100%;
-            border-radius: 30px;
-            margin-top: auto;
-            outline: none;
-        }
-
-        /* Card 2: Video YouTube */
+        /* Card Video YouTube */
         .video-card-header {
             margin-bottom: 14px;
         }
@@ -131,7 +70,7 @@
             border: 0;
         }
 
-        /* Lời bài hát */
+        /* Lời bài hát & Nút Tải Sheet */
         .lyrics-header {
             font-size: 1.15rem;
             font-weight: 700;
@@ -141,7 +80,29 @@
             margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .download-sheet-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #123b8d;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .download-sheet-btn:hover {
+            background: #1e3c72;
+            color: #ffffff;
+            transform: translateY(-1px);
         }
 
         .lyrics-box {
@@ -166,60 +127,6 @@
 
         .lyrics-section-tag:first-child {
             margin-top: 0;
-        }
-
-        /* Sheet Nhạc Trải Dọc */
-        .sheet-header {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 12px;
-            margin-bottom: 16px;
-        }
-
-        .sheet-container {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-            background: #fdfdfd;
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px dashed rgba(0, 0, 0, 0.1);
-        }
-
-        .sheet-img {
-            width: 100%;
-            max-width: 850px;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            object-fit: contain;
-        }
-
-        .download-sheet-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #123b8d;
-            color: #ffffff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.88rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .download-sheet-btn:hover {
-            background: #1e3c72;
-            color: #ffffff;
-            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -256,45 +163,26 @@
             <p>Nghiêng tai lắng nghe những giai điệu xanh</p>
         </section>
 
-        <!-- Khung 2 cột Audio & Video -->
-        <div class="song-top-grid">
-            <!-- Cột trái: Player Nhạc -->
-            <div class="song-card audio-card" style="margin-bottom: 0;">
-                <div class="music-cover">
-                    <img src="../images/icon.png" alt="NGỜ YÊN NGHIÊNG Icon">
-                </div>
-                <div class="song-title">Nương Theo Chúa</div>
-                <div class="song-artist">
-                    <strong>Lời bài hát:</strong> Giáng Ân<br>
-                    <strong>Trình bày:</strong> Hồng Ân, Nhật Hạ, Hiếu Kha<br>
-                    <strong>Hòa âm & Phối khí:</strong> Hiếu Kha
-                </div>
-
-                <audio class="audio-player" controls>
-                    <source src="../audio/NUONG THEO NGAI - MASTER OK 3.wav" type="audio/wav">
-                    Trình duyệt của bạn không hỗ trợ phát âm thanh.
-                </audio>
+        <!-- Khung Video YouTube -->
+        <div class="song-card">
+            <div class="video-card-header">
+                <div class="video-card-title">▶ Video Bài Hát Trại</div>
             </div>
-
-            <!-- Cột phải: Video YouTube -->
-            <div class="song-card" style="margin-bottom: 0;">
-                <div class="video-card-header">
-                    <div class="video-card-title">▶ Video Bài Hát Trại</div>
-                </div>
-                <div class="video-container">
-                    <!-- Đã sửa URL Embed đúng định dạng YouTube -->
-                    <iframe src="https://www.youtube.com/embed/f3C_xZteVHY" title="Video bài hát trại"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
-                </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/f3C_xZteVHY" title="Video bài hát trại"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
             </div>
         </div>
 
-        <!-- Khung Lời Bài Hát -->
+        <!-- Khung Lời Bài Hát & Nút Tải Sheet -->
         <div class="song-card">
             <div class="lyrics-header">
-                📜 Lời Bài Hát: Nương Theo Chúa
+                <span>📜 Lời Bài Hát: Nương Theo Chúa</span>
+                <a href="../images/Nương theo Ngài.pdf" download class="download-sheet-btn">
+                    📥 Tải File PDF Sheet Nhạc
+                </a>
             </div>
             <div class="lyrics-box">
                 <div class="lyrics-section-tag">Lời 1:</div>
@@ -340,21 +228,6 @@
                 Dù yếu đuối lo âu, luôn hằn sâu trong tâm con<br>
                 Ngài nghiêng tai lắng nghe, con cầu xin Cha thứ tha!<br>
                 Bởi ơn thiêng lớn sâu rộng thay, lòng con quyết nương theo Ngài thôi.
-            </div>
-        </div>
-
-        <!-- Khung Sheet Nhạc Trải Dọc 3 Trang -->
-        <div class="song-card">
-            <div class="sheet-header">
-                <span>🎼 Sheet Nhạc Bài Hát (3 Trang)</span>
-                <a href="../images/Nương theo Ngài.pdf" download class="download-sheet-btn">
-                    📥 Tải File PDF Sheet Nhạc
-                </a>
-            </div>
-            <div class="sheet-container">
-                <img src="../images/sheet/1.png" alt="Sheet nhạc Nương Theo Ngài - Trang 1" class="sheet-img">
-                <img src="../images/sheet/2.png" alt="Sheet nhạc Nương Theo Ngài - Trang 2" class="sheet-img">
-                <img src="../images/sheet/3.png" alt="Sheet nhạc Nương Theo Ngài - Trang 3" class="sheet-img">
             </div>
         </div>
     </main>
