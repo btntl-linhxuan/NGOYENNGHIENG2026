@@ -17,103 +17,210 @@
     <meta name="apple-mobile-web-app-title" content="BTN LX">
 
     <style>
+        .search-wrapper {
+            margin-top: 22px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .search-box-v2 {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            border: 2px solid #2d5a27;
+            border-radius: 30px;
+            padding: 4px 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.25s ease;
+        }
+
+        .search-box-v2:focus-within {
+            border-color: #4b783f;
+            box-shadow: 0 6px 20px rgba(45, 90, 39, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .search-icon {
+            font-size: 1.15rem;
+            margin-right: 10px;
+        }
+
+        .search-box-v2 input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 10px 0;
+            color: #1a1a1a;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .quick-stats {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 24px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-num {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #2d5a27;
+        }
+
+        .stat-label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 20px;
+            background: #ddd;
+        }
+
+        .filter-tags {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .tag-btn {
+            background: #ffffff;
+            border: 1px solid #c2c2c2;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tag-btn.active, .tag-btn:hover {
+            background: #2d5a27;
+            color: #ffffff;
+            border-color: #2d5a27;
+        }
+
         .rooms-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-            margin-top: 25px;
+            gap: 22px;
+            margin-top: 30px;
+            align-items: start;
         }
 
         .room-card {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 24px;
-            border: 1.5px solid rgba(62, 107, 54, 0.12);
-            box-shadow: var(--shadow-paper);
-            transition: var(--transition-smooth);
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid rgba(45, 90, 39, 0.15);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
 
         .room-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
         }
 
-        .room-header {
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 2px dashed #e2e8f0;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+            padding-bottom: 10px;
         }
 
         .room-badge {
+            color: #ffffff;
             padding: 6px 14px;
             border-radius: 20px;
-            font-weight: 800;
+            font-weight: 700;
             font-size: 0.9rem;
-            color: #ffffff;
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
 
-        .badge-nam {
-            background-color: #1565c0 !important;
-        }
+        .badge-nam { background-color: #1565c0 !important; }
+        .badge-nu { background-color: #c2185b !important; }
 
-        .badge-nu {
-            background-color: #c2185b !important;
-        }
-
-        .room-count {
-            font-size: 0.85rem;
+        .member-count {
+            font-size: 0.82rem;
             font-weight: 700;
-            color: var(--color-green-dark);
-            background: rgba(62, 107, 54, 0.1);
+            color: #2d5a27;
+            background: #e8f5e9;
             padding: 4px 10px;
             border-radius: 12px;
         }
 
-        .member-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .member-chip {
-            background: rgba(62, 107, 54, 0.08);
-            padding: 8px 14px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            color: var(--color-text-main);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            width: 100%;
-            justify-content: space-between;
-        }
-
-        .member-note {
-            font-size: 0.78rem;
-            color: #ffffff !important;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff9800 0%, #ed6c02 100%);
-            padding: 3px 10px;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(237, 108, 2, 0.35);
-            letter-spacing: 0.3px;
+        .members-section h4 {
+            font-size: 0.85rem;
+            color: #2d5a27;
+            margin-bottom: 8px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
         }
 
-        .loading-box {
-            text-align: center;
-            padding: 40px;
-            font-size: 1.1rem;
-            color: var(--color-green-dark);
+        .members-chips {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .chip {
+            background: #f1f8e9;
+            color: #1b5e20;
+            padding: 7px 12px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border: 1px solid rgba(45, 90, 39, 0.12);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chip-note {
+            font-size: 0.72rem;
+            background: #ff9800;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 8px;
             font-weight: 700;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            color: #2d5a27;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -142,49 +249,40 @@
     </header>
 
     <main class="container">
-        <!-- 🔴 KHI CHƯA CÔNG BỐ: Thẻ thông báo hiển thị -->
-        <!-- Khi công bố: Bạn XÓA toàn bộ thẻ div.coming-soon-box này -->
-        <div class="coming-soon-box glass text-center" style="padding: 50px 20px; margin-top: 30px;">
-            <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
-            <h2 style="color: #2d5a27; font-weight: 800;">THÔNG TIN SẼ ĐƯỢC CÔNG BỐ SAU</h2>
-            <p style="color: #555; margin-top: 8px;">Ban Tổ Chức đang hoàn thiện dữ liệu. Vui lòng quay lại sau nhé!</p>
-        </div>
-
-        <!-- 🟢 KHI CHƯA CÔNG BỐ: Nội dung chính tạm thời ẩn (style="display: none;") -->
-        <!-- Khi công bố: Xóa chữ style="display: none;" ở bên dưới -->
-        <div id="roomContent" style="display: none;">
+        <div id="roomContent">
             <section class="page-title glass text-center">
                 <span class="page-title-badge">🛏️ KHU NGHỈ NƠI TRẠI</span>
                 <h1>Phân Chia Phòng Ngủ ⛺</h1>
-                <p>Tra cứu thông tin phòng nghỉ dành riêng cho Nam & Nữ</p>
-            </section>
+                <p>Tra cứu phòng nghỉ dành cho Nam & Nữ</p>
 
-            <!-- Thanh Tìm Kiếm & Bộ Lọc -->
-            <section style="max-width: 800px; margin: 0 auto 20px;">
-                <div class="search-box-v2" style="margin-bottom: 15px;">
-                    <input type="text" id="searchInput" placeholder="🔍 Nhập tên trại sinh hoặc số phòng..."
-                        oninput="filterRooms()">
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <span class="stat-num" id="statRooms">-</span>
+                        <span class="stat-label">Phòng</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-num" id="statPeople">-</span>
+                        <span class="stat-label">Trại sinh</span>
+                    </div>
+                </div>
+
+                <div class="search-wrapper">
+                    <div class="search-box-v2">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Nhập tên người hoặc tên phòng..." oninput="filterRooms()">
+                    </div>
                 </div>
 
                 <div class="filter-tags">
-                    <button class="tag-btn active" onclick="setGenderFilter('ALL', this)">🌐 Tất cả phòng</button>
+                    <button class="tag-btn active" onclick="setGenderFilter('ALL', this)">🌐 Tất cả</button>
                     <button class="tag-btn" onclick="setGenderFilter('Nam', this)">👦 Phòng Nam</button>
                     <button class="tag-btn" onclick="setGenderFilter('Nu', this)">👧 Phòng Nữ</button>
                 </div>
             </section>
 
-            <!-- Hiển thị Danh Sách Phòng -->
             <section id="roomsContainer" class="rooms-grid">
-                <div class="skeleton-card" style="width: 100%;">
-                    <div class="skeleton-header">
-                        <div class="skeleton-avatar shimmer"></div>
-                        <div class="skeleton-info">
-                            <div class="skeleton-text-lg shimmer"></div>
-                            <div class="skeleton-text-sm shimmer"></div>
-                        </div>
-                    </div>
-                    <div class="skeleton-media shimmer" style="height: 100px;"></div>
-                </div>
+                <div class="no-results">⏳ Đang tải danh sách phòng...</div>
             </section>
         </div>
     </main>
@@ -194,7 +292,7 @@
     </footer>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxylF4BAqUZ5TrtZ95lqZiYyn5nmpH8kERssQawOgsKp7b2aL3FYBGIZ0QQeXox5hOjuw/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQd6YEnWoLTVMoUEPiEPRh5RlgdU-WAGiAgmcQhKsl9597-8DQVt9kMWqmo7WzDzjgQQ/exec";
 
         let allRoomsData = {};
         let currentGenderFilter = "ALL";
@@ -223,6 +321,8 @@
 
         function groupRooms(flatList) {
             allRoomsData = {};
+            let totalPeople = 0;
+
             flatList.forEach(item => {
                 const key = `${item.gender}_${item.room}`;
                 if (!allRoomsData[key]) {
@@ -236,19 +336,25 @@
                     name: item.name,
                     note: item.note
                 });
+                totalPeople++;
             });
+
+            document.getElementById("statRooms").textContent = Object.keys(allRoomsData).length;
+            document.getElementById("statPeople").textContent = totalPeople;
         }
+
+        const removeAccents = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
 
         function renderRooms() {
             const container = document.getElementById("roomsContainer");
             if (!container) return;
-            const searchVal = document.getElementById("searchInput").value.toLowerCase().trim();
+            const searchVal = removeAccents(document.getElementById("searchInput").value.trim());
             container.innerHTML = "";
 
             const roomKeys = Object.keys(allRoomsData);
 
             if (roomKeys.length === 0) {
-                container.innerHTML = `<div class="loading-box glass">Chưa có dữ liệu phòng ngủ.</div>`;
+                container.innerHTML = `<div class="no-results">❌ Chưa có dữ liệu phòng ngủ.</div>`;
                 return;
             }
 
@@ -261,8 +367,8 @@
                     return;
                 }
 
-                const matchRoomName = room.roomName.toLowerCase().includes(searchVal);
-                const matchedMembers = room.members.filter(m => m.name.toLowerCase().includes(searchVal));
+                const matchRoomName = removeAccents(room.roomName).includes(searchVal);
+                const matchedMembers = room.members.filter(m => removeAccents(m.name).includes(searchVal));
 
                 if (searchVal && !matchRoomName && matchedMembers.length === 0) {
                     return;
@@ -273,27 +379,35 @@
                 const card = document.createElement("div");
                 card.className = "room-card";
 
-                const isNam = room.gender === "Nam";
-                const badgeClass = isNam ? "badge-nam" : "badge-nu";
-                const icon = isNam ? "👦" : "👧";
-                const genderTitle = isNam ? "Phòng Nam" : "Phòng Nữ";
+                let badgeClass = "badge-nam";
+                let icon = "👦";
+                let genderTitle = "Nam";
+
+                if (room.gender === "Nu") {
+                    badgeClass = "badge-nu";
+                    icon = "👧";
+                    genderTitle = "Nữ";
+                }
 
                 let membersHTML = room.members.map((m, idx) => `
-                    <div class="member-chip">
+                    <div class="chip">
                         <span><strong>${idx + 1}.</strong> ${m.name}</span>
-                        ${m.note ? `<span class="member-note">${m.note}</span>` : ""}
+                        ${m.note ? `<span class="chip-note">${m.note}</span>` : ""}
                     </div>
                 `).join("");
 
                 card.innerHTML = `
-                    <div class="room-header">
+                    <div class="card-header">
                         <span class="room-badge ${badgeClass}">
-                            ${icon} ${genderTitle} ${room.roomName}
+                            ${icon} ${room.roomName}
                         </span>
-                        <span class="room-count">${room.members.length} trại sinh</span>
+                        <span class="member-count">👥 ${room.members.length} người</span>
                     </div>
-                    <div class="member-list">
-                        ${membersHTML}
+                    <div class="members-section">
+                        <h4>Danh sách ở phòng</h4>
+                        <div class="members-chips">
+                            ${membersHTML}
+                        </div>
                     </div>
                 `;
 
@@ -301,7 +415,7 @@
             });
 
             if (!hasMatches) {
-                container.innerHTML = `<div class="loading-box glass">Không tìm thấy phòng hoặc trại sinh phù hợp!</div>`;
+                container.innerHTML = `<div class="no-results">🔍 Không tìm thấy phòng hoặc thành viên phù hợp!</div>`;
             }
         }
 
@@ -319,7 +433,7 @@
         function showError(msg) {
             const container = document.getElementById("roomsContainer");
             if (container) {
-                container.innerHTML = `<div class="loading-box glass" style="color: #c62828;">⚠️ ${msg}</div>`;
+                container.innerHTML = `<div class="no-results" style="color: #c62828;">⚠️ ${msg}</div>`;
             }
         }
 
@@ -334,16 +448,7 @@
             }
         }
     </script>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('../sw.js')
-                    .then(reg => console.log('SW đã đăng ký thành công!'))
-                    .catch(err => console.log('Lỗi đăng ký SW:', err));
-            });
-        }
-    </script>
+    <script src="../tracker.js"></script>
 </body>
 
 </html>
