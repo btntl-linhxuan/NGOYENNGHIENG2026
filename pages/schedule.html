@@ -21,8 +21,8 @@
         .schedule-controls {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin: 20px 0 30px 0;
+            gap: 10px;
+            margin: 15px 0 25px 0;
             flex-wrap: wrap;
         }
 
@@ -30,10 +30,10 @@
             background: #ffffff !important;
             color: #2d5a27 !important;
             border: 1.5px solid #2d5a27 !important;
-            padding: 8px 18px;
+            padding: 6px 16px;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.25s ease;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -55,10 +55,10 @@
         .live-banner {
             background: linear-gradient(135deg, #2d5a27, #4b783f);
             color: #ffffff;
-            padding: 16px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
         }
 
         .live-banner .live-badge {
@@ -67,31 +67,23 @@
             gap: 6px;
             background: #ff4d6d;
             color: white;
-            font-size: 0.8rem;
-            padding: 3px 10px;
-            border-radius: 12px;
+            font-size: 0.78rem;
+            padding: 2px 8px;
+            border-radius: 10px;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-
-            100% {
-                opacity: 1;
-            }
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
 
-        /* Style Bảng Lịch trình */
+        /* Style Bảng Lịch trình Tối ưu */
         .day-block {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             transition: all 0.3s ease;
         }
 
@@ -100,28 +92,46 @@
             border-collapse: separate;
             border-spacing: 0;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
+            border-radius: 14px;
             overflow: hidden;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
-            margin-top: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            margin-top: 10px;
         }
 
         .schedule th {
             background: #2d5a27 !important;
             color: #ffffff !important;
-            padding: 14px 16px;
+            padding: 10px 14px;
             text-align: left;
-            font-size: 1rem;
+            font-size: 0.92rem;
             font-weight: 700;
             letter-spacing: 0.5px;
         }
 
         .schedule td {
-            padding: 14px 16px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 8px 14px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
             color: #222222;
             vertical-align: middle;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+        }
+
+        /* Dòng xen kẽ (Alternate Zebra Striping) */
+        .schedule tbody tr:nth-child(even) {
+            background-color: rgba(45, 90, 39, 0.035);
+        }
+
+        /* Hiệu ứng Rê chuột */
+        .schedule tbody tr:hover {
+            background-color: rgba(45, 90, 39, 0.08);
+            transition: background-color 0.15s ease;
+        }
+
+        /* Đẩy nội dung ô hoạt động và tag sang 2 bên */
+        .schedule td:nth-child(2) {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .schedule tr:last-child td {
@@ -130,23 +140,25 @@
 
         /* Trạng thái sự kiện */
         tr.event-past {
-            opacity: 0.55;
-            background: rgba(240, 240, 240, 0.5);
+            opacity: 0.5;
+            background: rgba(240, 240, 240, 0.4) !important;
         }
 
         tr.event-active {
-            background: rgba(255, 235, 238, 0.85) !important;
+            background: rgba(255, 235, 238, 0.9) !important;
             border-left: 4px solid #ff4d6d;
             font-weight: 600;
         }
 
         .status-tag {
-            display: inline-block;
-            font-size: 0.78rem;
-            padding: 3px 8px;
-            border-radius: 10px;
-            margin-left: 8px;
-            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 10px;
         }
 
         .status-tag.active {
@@ -165,11 +177,15 @@
         }
 
         @media (max-width: 600px) {
-
             .schedule th,
             .schedule td {
-                padding: 12px;
-                font-size: 0.88rem;
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+
+            .status-tag {
+                font-size: 0.7rem;
+                padding: 2px 6px;
             }
         }
     </style>
@@ -199,17 +215,7 @@
     </header>
 
     <main class="container">
-        <!-- 🔴 KHI CHƯA CÔNG BỐ: Thẻ thông báo hiển thị -->
-        <!-- Khi công bố: Bạn XÓA toàn bộ thẻ div.coming-soon-box này -->
-        <div class="coming-soon-box glass text-center" style="padding: 50px 20px; margin-top: 30px;">
-            <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
-            <h2 style="color: #2d5a27; font-weight: 800;">THÔNG TIN SẼ ĐƯỢC CÔNG BỐ SAU</h2>
-            <p style="color: #555; margin-top: 8px;">Ban Tổ Chức đang hoàn thiện dữ liệu. Vui lòng quay lại sau nhé!</p>
-        </div>
-
-        <!-- 🟢 KHI CHƯA CÔNG BỐ: Nội dung chính tạm thời ẩn (style="display: none;") -->
-        <!-- Khi công bố: Xóa chữ style="display: none;" ở bên dưới -->
-        <div id="scheduleContent" style="display: none;">
+        <div id="scheduleContent">
             <section class="page-title glass text-center">
                 <span class="page-title-badge">📅 TIMELINE</span>
                 <h1>Lịch Trình Trại</h1>
@@ -219,48 +225,58 @@
             <!-- Thẻ thông báo hoạt động đang diễn ra -->
             <div id="liveBanner" class="live-banner" style="display: none;">
                 <div class="live-badge">🔴 ĐANG DIỄN RA</div>
-                <h3 id="liveTitle" style="margin: 4px 0; font-size: 1.2rem;">-</h3>
-                <p id="liveTime" style="margin: 0; opacity: 0.9; font-size: 0.9rem;">🕒 -</p>
+                <h3 id="liveTitle" style="margin: 4px 0; font-size: 1.1rem;">-</h3>
+                <p id="liveTime" style="margin: 0; opacity: 0.9; font-size: 0.85rem;">🕒 -</p>
             </div>
 
             <!-- Bộ lọc chọn ngày -->
             <div class="schedule-controls">
                 <button class="tab-btn active" onclick="filterSchedule('all', this)">📌 Tất cả</button>
                 <button class="tab-btn" onclick="filterSchedule('day0', this)">📅 Ngày 0 (30/8)</button>
-                <button class="tab-btn" onclick="filterSchedule('day1', this)">📅 Ngày 1 (31/8)</button>
+                <button class="tab-btn" onclick="filterSchedule('day1', this)">📅 Ngày “NGỜ” (31/8)</button>
+                <button class="tab-btn" onclick="filterSchedule('day2', this)">📅 Ngày “YÊN” (01/9)</button>
+                <button class="tab-btn" onclick="filterSchedule('day3', this)">📅 Ngày “NGHIÊNG” (02/9)</button>
             </div>
 
             <section class="schedule">
                 <!-- NGÀY 0 -->
                 <div class="day-block" id="day0">
-                    <h2 style="color: #2d5a27; margin-top: 15px;">📅 Ngày 0 (30/8)</h2>
+                    <h2 style="color: #2d5a27; margin-top: 15px; font-size: 1.2rem;">📅 Ngày 0 (30/8)</h2>
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 35%;">Thời gian</th>
+                                <th style="width: 25%;">Thời gian</th>
                                 <th>Hoạt động</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>07:00 - 10:30</td>
-                                <td>Thờ phượng Chúa @ Hội Thánh Tin Lành Linh Xuân</td>
+                                <td>06:00 - 10:30</td>
+                                <td>Thờ phượng Chúa tại HTTL Linh Xuân</td>
                             </tr>
                             <tr>
                                 <td>10:30 - 11:00</td>
-                                <td>Tập trung + ăn trưa trước khi khởi hành</td>
+                                <td>Tập trung</td>
                             </tr>
                             <tr>
-                                <td>12:00 - 21:00</td>
-                                <td>Di chuyển + ăn tối</td>
+                                <td>11:00 - 21:00</td>
+                                <td>Lên núi</td>
+                            </tr>
+                            <tr>
+                                <td>21:00 - 21:30</td>
+                                <td>Ổn định & cất đồ</td>
                             </tr>
                             <tr>
                                 <td>21:30 - 22:30</td>
-                                <td>Sinh hoạt nhóm nhỏ + ăn nhẹ</td>
+                                <td>Nhóm nhỏ</td>
                             </tr>
                             <tr>
                                 <td>22:30 - 23:00</td>
-                                <td>Giờ giới nghiêm</td>
+                                <td>Giới nghiêm</td>
+                            </tr>
+                            <tr>
+                                <td>23:00 - 05:00</td>
+                                <td>Zzz...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -268,21 +284,25 @@
 
                 <!-- NGÀY 1 -->
                 <div class="day-block" id="day1">
-                    <h2 style="color: #2d5a27; margin-top: 25px;">📅 Ngày 1 (31/8)</h2>
+                    <h2 style="color: #2d5a27; margin-top: 20px; font-size: 1.2rem;">📅 Ngày “NGỜ” (31/8)</h2>
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 35%;">Thời gian</th>
+                                <th style="width: 25%;">Thời gian</th>
                                 <th>Hoạt động</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>06:15 - 07:00</td>
-                                <td>Tĩnh nguyện (Linh An soạn)</td>
+                                <td>06:00 - 06:15</td>
+                                <td>Thức dậy & ổn định</td>
                             </tr>
                             <tr>
-                                <td>07:00 - 07:50</td>
+                                <td>06:15 - 07:00</td>
+                                <td>Tĩnh nguyện</td>
+                            </tr>
+                            <tr>
+                                <td>07:00 - 08:00</td>
                                 <td>Ăn sáng</td>
                             </tr>
                             <tr>
@@ -295,7 +315,7 @@
                             </tr>
                             <tr>
                                 <td>08:30 - 09:30</td>
-                                <td>Khai mạc trại</td>
+                                <td>Khai mạc</td>
                             </tr>
                             <tr>
                                 <td>09:30 - 10:20</td>
@@ -307,7 +327,249 @@
                             </tr>
                             <tr>
                                 <td>10:30 - 11:00</td>
-                                <td>Sinh hoạt nhóm nhỏ (Mỹ Hằng + Tín Huỳnh + Tường Vy chuẩn bị)</td>
+                                <td>“NGỜ” HAY “NHỜ”?</td>
+                            </tr>
+                            <tr>
+                                <td>11:00 - 12:00</td>
+                                <td>Ăn trưa</td>
+                            </tr>
+                            <tr>
+                                <td>12:00 - 13:30</td>
+                                <td>Nghỉ ngơi</td>
+                            </tr>
+                            <tr>
+                                <td>13:30 - 13:40</td>
+                                <td>Phá băng</td>
+                            </tr>
+                            <tr>
+                                <td>13:40 - 14:00</td>
+                                <td>Tôn vinh Chúa</td>
+                            </tr>
+                            <tr>
+                                <td>14:00 - 14:45</td>
+                                <td>Học Kinh Thánh</td>
+                            </tr>
+                            <tr>
+                                <td>14:45 - 15:00</td>
+                                <td>Giải lao</td>
+                            </tr>
+                            <tr>
+                                <td>15:00 - 17:00</td>
+                                <td>“TIN” HAY “NGỜ”?</td>
+                            </tr>
+                            <tr>
+                                <td>17:00 - 18:00</td>
+                                <td>Ăn tối</td>
+                            </tr>
+                            <tr>
+                                <td>18:00 - 19:30</td>
+                                <td>Tự do & viết thư</td>
+                            </tr>
+                            <tr>
+                                <td>19:30 - 21:30</td>
+                                <td>AI HAY CHỮ NGỜ?</td>
+                            </tr>
+                            <tr>
+                                <td>21:30 - 22:30</td>
+                                <td>NÓI BẠN TÔI NGỜ...</td>
+                            </tr>
+                            <tr>
+                                <td>22:30 - 23:00</td>
+                                <td>Giới nghiêm</td>
+                            </tr>
+                            <tr>
+                                <td>23:00 - 05:00</td>
+                                <td>Zzz...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- NGÀY 2 -->
+                <div class="day-block" id="day2">
+                    <h2 style="color: #2d5a27; margin-top: 20px; font-size: 1.2rem;">📅 Ngày “YÊN” (01/9)</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Thời gian</th>
+                                <th>Hoạt động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>06:00 - 06:15</td>
+                                <td>Thức dậy & ổn định</td>
+                            </tr>
+                            <tr>
+                                <td>06:15 - 07:00</td>
+                                <td>Tĩnh nguyện</td>
+                            </tr>
+                            <tr>
+                                <td>07:00 - 08:00</td>
+                                <td>Ăn sáng</td>
+                            </tr>
+                            <tr>
+                                <td>08:00 - 08:10</td>
+                                <td>Phá băng</td>
+                            </tr>
+                            <tr>
+                                <td>08:10 - 08:30</td>
+                                <td>Tôn vinh Chúa</td>
+                            </tr>
+                            <tr>
+                                <td>08:30 - 09:15</td>
+                                <td>Học Kinh Thánh</td>
+                            </tr>
+                            <tr>
+                                <td>09:15 - 09:30</td>
+                                <td>Giải lao</td>
+                            </tr>
+                            <tr>
+                                <td>09:30 - 11:00</td>
+                                <td>Workshop YÊN</td>
+                            </tr>
+                            <tr>
+                                <td>11:00 - 12:00</td>
+                                <td>Ăn trưa</td>
+                            </tr>
+                            <tr>
+                                <td>12:00 - 13:30</td>
+                                <td>Nghỉ ngơi</td>
+                            </tr>
+                            <tr>
+                                <td>13:30 - 13:40</td>
+                                <td>Tập trung</td>
+                            </tr>
+                            <tr>
+                                <td>13:40 - 14:00</td>
+                                <td>Di chuyển</td>
+                            </tr>
+                            <tr>
+                                <td>14:00 - 17:00</td>
+                                <td>Trò chơi lớn</td>
+                            </tr>
+                            <tr>
+                                <td>17:00 - 18:00</td>
+                                <td>Tự do & viết thư</td>
+                            </tr>
+                            <tr>
+                                <td>18:00 - 19:00</td>
+                                <td>Ăn tối</td>
+                            </tr>
+                            <tr>
+                                <td>19:00 - 20:30</td>
+                                <td>Lửa trại</td>
+                            </tr>
+                            <tr>
+                                <td>20:30 - 21:30</td>
+                                <td>BBQ</td>
+                            </tr>
+                            <tr>
+                                <td>21:30 - 22:30</td>
+                                <td>Dọn dẹp & ra về</td>
+                            </tr>
+                            <tr>
+                                <td>22:30 - 23:00</td>
+                                <td>Giới nghiêm</td>
+                            </tr>
+                            <tr>
+                                <td>23:00 - 05:00</td>
+                                <td>Zzz...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- NGÀY 3 -->
+                <div class="day-block" id="day3">
+                    <h2 style="color: #2d5a27; margin-top: 20px; font-size: 1.2rem;">📅 Ngày “NGHIÊNG” (02/9)</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Thời gian</th>
+                                <th>Hoạt động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>06:00 - 06:15</td>
+                                <td>Thức dậy & ổn định</td>
+                            </tr>
+                            <tr>
+                                <td>06:15 - 07:00</td>
+                                <td>Tĩnh nguyện</td>
+                            </tr>
+                            <tr>
+                                <td>07:00 - 08:00</td>
+                                <td>Ăn sáng</td>
+                            </tr>
+                            <tr>
+                                <td>08:00 - 08:10</td>
+                                <td>Phá băng</td>
+                            </tr>
+                            <tr>
+                                <td>08:10 - 08:30</td>
+                                <td>Tôn vinh Chúa</td>
+                            </tr>
+                            <tr>
+                                <td>08:30 - 09:15</td>
+                                <td>Học Kinh Thánh</td>
+                            </tr>
+                            <tr>
+                                <td>09:15 - 09:30</td>
+                                <td>Giải lao</td>
+                            </tr>
+                            <tr>
+                                <td>09:30 - 11:00</td>
+                                <td>NGHIÊNG VỀ CHỐN BÌNH YÊN</td>
+                            </tr>
+                            <tr>
+                                <td>11:00 - 12:00</td>
+                                <td>Ăn trưa</td>
+                            </tr>
+                            <tr>
+                                <td>12:00 - 13:30</td>
+                                <td>Nghỉ ngơi</td>
+                            </tr>
+                            <tr>
+                                <td>13:30 - 16:00</td>
+                                <td>Outing nhóm nhỏ & Viết thư</td>
+                            </tr>
+                            <tr>
+                                <td>16:00 - 17:00</td>
+                                <td>Tự do & viết thư</td>
+                            </tr>
+                            <tr>
+                                <td>17:00 - 18:00</td>
+                                <td>Ăn tối</td>
+                            </tr>
+                            <tr>
+                                <td>18:00 - 18:30</td>
+                                <td>Dọn đồ</td>
+                            </tr>
+                            <tr>
+                                <td>18:30 - 18:40</td>
+                                <td>Phá băng</td>
+                            </tr>
+                            <tr>
+                                <td>18:40 - 19:00</td>
+                                <td>Tôn vinh Chúa</td>
+                            </tr>
+                            <tr>
+                                <td>19:00 - 20:30</td>
+                                <td>Bế mạc</td>
+                            </tr>
+                            <tr>
+                                <td>20:30 - 21:00</td>
+                                <td>Dọn dẹp & vệ sinh</td>
+                            </tr>
+                            <tr>
+                                <td>21:00 - 21:30</td>
+                                <td>Ổn định & tập trung</td>
+                            </tr>
+                            <tr>
+                                <td>21:30 - 23:00</td>
+                                <td>Xuống núi</td>
                             </tr>
                         </tbody>
                     </table>
@@ -444,6 +706,7 @@
             });
         }
     </script>
+    <script src="../tracker.js"></script>
 </body>
 
 </html>
