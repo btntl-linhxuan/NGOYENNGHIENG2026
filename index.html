@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NGỜ YÊN NGHIÊNG</title>
+    <title>Trang chủ NGỜ YÊN NGHIÊNG</title>
 
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="images/icon.png">
@@ -121,13 +121,15 @@
                     <img src="images/logo.png" alt="NGỜ YÊN NGHIÊNG">
                 </a>
             </div>
-
+        
             <button class="menu-toggle" aria-label="Toggle Navigation">☰</button>
             <div class="menu">
                 <a href="index.html" class="active">Home</a>
                 <a href="pages/schedule.html">Lịch trình</a>
                 <a href="pages/groups.html">Danh sách nhóm</a>
                 <a href="pages/room.html">Sắp xếp phòng</a>
+                <a href="pages/song.html">Bài hát trại</a>
+                <a href="pages/vote.html">Bình chọn</a>
                 <a href="pages/confession.html">Confession</a>
                 <a href="pages/gallery.html">Khoảnh khắc</a>
                 <a href="pages/btc.html">BTC</a>
@@ -324,8 +326,7 @@
             const labelEl = document.getElementById("countdownLabel");
 
             if (distance <= 0) {
-                if (liveBlock) liveBlock.style.display = "none";
-                if (welcomeBlock) welcomeBlock.style.display = "block";
+                if (stickyBlock) stickyBlock.style.display = "none"; // Ẩn sạch toàn bộ khung góc màn hình
                 return;
             }
 
@@ -473,7 +474,289 @@
                     .catch(err => console.log('Lỗi đăng ký SW:', err));
             });
         }
+
+        // ----------------------------------------------------
+        // 4. BẢO VỆ FRONTEND (CHẶN F12, CHUỘT PHẢI & DEVTOOLS)
+        // ----------------------------------------------------
+        // Chặn menu chuột phải
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Chặn các phím tắt mở DevTools phổ biến (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U, Ctrl+S)
+        document.addEventListener('keydown', (e) => {
+            if (
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && ['I', 'J', 'C', 'K'].includes(e.key.toUpperCase())) ||
+                (e.ctrlKey && e.key.toUpperCase() === 'U') ||
+                (e.ctrlKey && e.key.toUpperCase() === 'S')
+            ) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Bẫy debugger khựng trang khi ai đó cố tình mở DevTools
+        setInterval(() => {
+            const startTime = performance.now();
+            debugger;
+            const endTime = performance.now();
+            if (endTime - startTime > 100) {
+                console.warn('Cảnh báo: DevTools đang được mở!');
+            }
+        }, 1000);
+    </script>
+    <!-- CSS Modal Chọn Tên -->
+    <style>
+        .user-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(18, 59, 141, 0.65);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .user-modal-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 28px 24px;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            border: 2px solid #4c7840;
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalPop {
+            from {
+                transform: scale(0.85);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .user-modal-card h2 {
+            color: #2d5a27;
+            font-size: 1.35rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .user-modal-card p {
+            color: #555;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .user-select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid #2d5a27;
+            font-size: 0.95rem;
+            font-weight: 600;
+            outline: none;
+            margin-bottom: 15px;
+            background: #f9fbf9;
+        }
+
+        .btn-user-submit {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #2d5a27, #4b783f);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-user-submit:active {
+            transform: scale(0.98);
+        }
+
+        .user-divider {
+            margin: 18px 0;
+            position: relative;
+            text-align: center;
+        }
+
+        .user-divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .user-divider span {
+            background: #fff;
+            padding: 0 10px;
+            color: #888;
+            font-size: 0.8rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .btn-guest {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #2d5a27, #4b783f);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+    </style>
+
+    <!-- HTML Modal Check-in -->
+    <div id="userModalOverlay" class="user-modal-overlay" style="display: none;">
+        <div class="user-modal-card">
+            <h2>⛺ CHÀO MỪNG TỚI NGỜ YÊN NGHIÊNG!</h2>
+            <p>Vui lòng tìm và chọn tên của mình để vào trải nghiệm web nhé!</p>
+
+            <!-- Chế độ chọn Trại sinh -->
+            <div id="selectUserMode">
+                <select id="userSelectDropdown" class="user-select">
+                    <option value="">-- Chọn tên của bạn --</option>
+                </select>
+
+                <button class="btn-user-submit" onclick="confirmUserSelection()">Vào Web Ngay 🚀</button>
+
+                <div class="user-divider"><span>HOẶC</span></div>
+
+                <button class="btn-guest" onclick="toggleGuestMode(true)">✨ Bạn không phải là trại sinh / khách mời /
+                    diễn giả?</button>
+            </div>
+
+            <!-- Chế độ nhập tên Khách mời/Diễn giả -->
+            <div id="guestInputMode" style="display: none;">
+                <input type="text" id="guestNameInput" class="user-select" placeholder="Nhập Họ & Tên của bạn..."
+                    style="margin-bottom: 12px;">
+                <button class="btn-user-submit" onclick="confirmGuestSelection()">Xác nhận vào Web 🚀</button>
+                <button class="btn-guest" onclick="toggleGuestMode(false)"
+                    style="margin-top: 10px; background: #64748b;">← Quay lại danh sách</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tải tracker.js trước để lấy API_URL đúng và hàm logPageVisit -->
+    <script src="./tracker.js"></script>
+
+    <!-- Script xử lý đăng nhập & chuyển đổi Modal của Trang chủ -->
+    <script>
+        // 1. Tải danh sách tên theo nhóm từ Google Sheet
+        async function loadUserDropdown() {
+            try {
+                // API_URL lấy tự động từ tracker.js
+                const res = await fetch(`${API_URL}?action=groups`);
+                const data = await res.json();
+                const selectEl = document.getElementById("userSelectDropdown");
+
+                if (!Array.isArray(data) || data.length === 0) return;
+
+                const groupedData = {};
+                data.forEach(item => {
+                    const groupName = capitalizeFirst(item.group || "Khác");
+                    if (!groupedData[groupName]) groupedData[groupName] = [];
+                    groupedData[groupName].push(item.name);
+                });
+
+                const sortedGroups = Object.keys(groupedData).sort((a, b) => {
+                    const numA = parseInt(a.replace(/\D/g, '')) || 99;
+                    const numB = parseInt(b.replace(/\D/g, '')) || 99;
+                    return numA - numB;
+                });
+
+                sortedGroups.forEach(group => {
+                    const optGroup = document.createElement("optgroup");
+                    optGroup.label = `--- ${group.toUpperCase()} ---`;
+
+                    groupedData[group].sort().forEach(name => {
+                        const opt = document.createElement("option");
+                        opt.value = `${name} (${group})`;
+                        opt.textContent = name;
+                        optGroup.appendChild(opt);
+                    });
+
+                    selectEl.appendChild(optGroup);
+                });
+            } catch (e) {
+                console.error("Lỗi tải danh sách tên:", e);
+            }
+        }
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // 2. Tự động kiểm tra Check-in khi mở trang
+        window.addEventListener("load", () => {
+            const savedUser = localStorage.getItem("camp_user_name");
+            if (!savedUser) {
+                document.getElementById("userModalOverlay").style.display = "flex";
+                loadUserDropdown();
+            } else {
+                if (typeof logPageVisit === "function") {
+                    logPageVisit("Trang chủ");
+                }
+            }
+        });
+
+        // 3. Xác nhận chọn Trại sinh & Ghi nhận vào Sheet
+        function confirmUserSelection() {
+            const selectedValue = document.getElementById("userSelectDropdown").value;
+            if (!selectedValue) {
+                alert("⚠️ Vui lòng chọn tên của bạn trước nhé!");
+                return;
+            }
+            localStorage.setItem("camp_user_name", selectedValue);
+            document.getElementById("userModalOverlay").style.display = "none";
+            
+            if (typeof logPageVisit === "function") {
+                logPageVisit("Trang chủ");
+            }
+        }
+
+        // 4. Bật/tắt chế độ Khách
+        function toggleGuestMode(isGuest) {
+            document.getElementById("selectUserMode").style.display = isGuest ? "none" : "block";
+            document.getElementById("guestInputMode").style.display = isGuest ? "block" : "none";
+        }
+
+        // 5. Xác nhận nhập tên Khách & Ghi nhận vào Sheet
+        function confirmGuestSelection() {
+            const guestName = document.getElementById("guestNameInput").value.trim();
+            if (!guestName) {
+                alert("⚠️ Vui lòng nhập tên của bạn!");
+                return;
+            }
+            const formattedGuest = `[Khách] ${guestName}`;
+            localStorage.setItem("camp_user_name", formattedGuest);
+            document.getElementById("userModalOverlay").style.display = "none";
+            
+            if (typeof logPageVisit === "function") {
+                logPageVisit("Trang chủ");
+            }
+        }
     </script>
 </body>
-
 </html>
