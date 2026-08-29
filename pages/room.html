@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh Sách Phòng Ngủ - NGỜ YÊN NGHIÊNG</title>
+    <title>Danh Sách Phòng Ngủ</title>
 
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" href="../images/icon.png">
@@ -240,7 +240,9 @@
                 <a href="../index.html">Home</a>
                 <a href="schedule.html">Lịch trình</a>
                 <a href="groups.html">Danh sách nhóm</a>
-                <a href="room.html" class="active">Sắp xếp phòng</a>
+                <a href="room.html"class="active">Sắp xếp phòng</a>
+                <a href="song.html">Bài hát trại</a>
+                <a href="vote.html">Bình chọn</a>
                 <a href="confession.html">Confession</a>
                 <a href="gallery.html">Khoảnh khắc</a>
                 <a href="btc.html">BTC</a>
@@ -292,7 +294,7 @@
     </footer>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQd6YEnWoLTVMoUEPiEPRh5RlgdU-WAGiAgmcQhKsl9597-8DQVt9kMWqmo7WzDzjgQQ/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwDU-k3sMhuqz5PCllI0cWg46gbXai0JIIvdWOfqPVTW2w30ppuOBlMfeA3Ar3ggjIEpg/exec";
 
         let allRoomsData = {};
         let currentGenderFilter = "ALL";
@@ -449,6 +451,13 @@
         }
     </script>
     <script src="../tracker.js"></script>
+    <script>
+        window.addEventListener("load", () => {
+            if (typeof logPageVisit === "function") {
+                logPageVisit("Phòng ngủ");
+            }
+        });
+    </script>
 </body>
 
 </html>
