@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Khoảnh Khắc - NGỜ YÊN NGHIÊNG</title>
+    <title>Khoảnh Khắc</title>
 
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" href="../images/icon.png">
@@ -17,7 +17,6 @@
     <meta name="apple-mobile-web-app-title" content="BTN LX">
 
     <style>
-        /* 🟢 BỐ CỤC PINTEREST/WATERFALL: Loại bỏ hoàn toàn khoảng trống rỗng giữa các bài đăng */
         .posts-grid {
             display: block !important;
             column-count: 3;
@@ -68,6 +67,8 @@
                 <a href="schedule.html">Lịch trình</a>
                 <a href="groups.html">Danh sách nhóm</a>
                 <a href="room.html">Sắp xếp phòng</a>
+                <a href="song.html">Bài hát trại</a>
+                <a href="vote.html">Bình chọn</a>
                 <a href="confession.html">Confession</a>
                 <a href="gallery.html" class="active">Khoảnh khắc</a>
                 <a href="btc.html">BTC</a>
@@ -85,14 +86,12 @@
             </div>
         </section>
 
-        <!-- Thanh lọc theo Ngày -->
         <div class="filter-hashtags" id="filterContainer">
             <button class="tag-btn active" data-filter="all">Tất cả</button>
         </div>
 
         <section class="gallery-feed">
             <div id="posts" class="posts-grid">
-                <!-- Skeleton Loading Cards -->
                 <div class="skeleton-card">
                     <div class="skeleton-header">
                         <div class="skeleton-avatar shimmer"></div>
@@ -104,21 +103,8 @@
                     <div class="skeleton-media shimmer"></div>
                     <div class="skeleton-caption shimmer"></div>
                 </div>
-
-                <div class="skeleton-card">
-                    <div class="skeleton-header">
-                        <div class="skeleton-avatar shimmer"></div>
-                        <div class="skeleton-info">
-                            <div class="skeleton-text-lg shimmer"></div>
-                            <div class="skeleton-text-sm shimmer"></div>
-                        </div>
-                    </div>
-                    <div class="skeleton-media shimmer" style="height:260px;"></div>
-                    <div class="skeleton-caption shimmer"></div>
-                </div>
             </div>
 
-            <!-- Nút Phân Trang (Xem thêm) -->
             <div id="loadMoreWrap" style="text-align: center; margin: 30px 0; display: none;">
                 <button id="loadMoreBtn" class="action-btn" onclick="handleLoadMore()" style="padding: 12px 28px; font-size: 1rem; cursor: pointer;">
                     📥 Xem thêm khoảnh khắc
@@ -126,21 +112,17 @@
             </div>
         </section>
 
-        <!-- Nút gửi ảnh floating -->
-        <a href="https://forms.gle/Zti5JjRxk8KxdCaSA" target="_blank" rel="noopener" class="floating-upload-btn"
-            title="Đăng ảnh ngay">
+        <a href="https://forms.gle/Zti5JjRxk8KxdCaSA" target="_blank" rel="noopener" class="floating-upload-btn" title="Đăng ảnh ngay">
             <span class="fab-icon">📤</span>
             <span class="fab-text">Gửi ảnh kỷ niệm</span>
         </a>
     </main>
 
-    <!-- Modal Phóng To Ảnh -->
     <div id="imageModal" class="image-modal">
         <span class="close-modal">&times;</span>
         <img class="modal-content" id="modalImg" alt="Xem phóng to">
     </div>
 
-    <!-- Toast thông báo -->
     <div id="toast" class="toast-msg">🔗 Đã sao chép liên kết bài viết!</div>
 
     <footer>
@@ -148,7 +130,6 @@
     </footer>
 
     <script>
-        // 1. Quản lý Toggle Navigation Mobile
         const toggle = document.querySelector(".menu-toggle");
         const menu = document.querySelector(".menu");
 
@@ -166,7 +147,6 @@
             });
         }
 
-        // 2. Cấu hình API & Biến Quản lý
         const scriptURL = "https://script.google.com/macros/s/AKfycbwK9Fs_PEFXXcHyH7h1DPxjNuKlIXnaPBjZdlZIiAeEd_ydjKB-yz-0f224P62ET1S6Lw/exec";
         const avatars = ["🏕️", "🔥", "🌻", "🌟", "📸", "🎒", "⛺"];
 
@@ -183,14 +163,11 @@
             return avatars[charCode % avatars.length];
         }
 
-        // Chuẩn hóa dữ liệu ảnh
         function getPostImages(post) {
-            let raw = post.images || post.image || post.img || post.photos || post.photo;
+            let raw = post.media || post.images || post.image || post.photos;
             if (!raw) return [];
 
-            if (Array.isArray(raw)) {
-                return raw.map(url => String(url).trim()).filter(url => url.length > 0);
-            }
+            if (Array.isArray(raw)) return raw;
 
             if (typeof raw === 'string') {
                 raw = raw.trim();
@@ -198,10 +175,7 @@
 
                 if (raw.startsWith('[') && raw.endsWith(']')) {
                     try {
-                        const parsed = JSON.parse(raw);
-                        if (Array.isArray(parsed)) {
-                            return parsed.map(url => String(url).trim()).filter(url => url.length > 0);
-                        }
+                        return JSON.parse(raw);
                     } catch (e) {}
                 }
 
@@ -209,17 +183,73 @@
                     return raw.split(/[\,\n]+/).map(url => url.trim()).filter(url => url.length > 0);
                 }
 
-                if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('data:')) {
-                    return [raw];
-                }
+                return [raw];
             }
 
             return [];
         }
 
-        // Bộ lọc bài đã duyệt
+        // Bóc tách ID Google Drive
+        function getDriveId(url) {
+            if (!url) return null;
+            const str = typeof url === 'object' ? String(url.url || '') : String(url);
+            const match = str.match(/id=([a-zA-Z0-9_-]+)/) || str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            return match ? match[1] : null;
+        }
+
+        // Kiểm tra loại Video
+        function isVideoMedia(item) {
+            if (!item) return false;
+            if (typeof item === 'object' && item.type === 'video') return true;
+            const url = typeof item === 'object' ? item.url : String(item);
+            const lowerUrl = url.toLowerCase();
+            return lowerUrl.includes('.mp4') || 
+                   lowerUrl.includes('.mov') || 
+                   lowerUrl.includes('.webm') ||
+                   lowerUrl.includes('/preview') ||
+                   lowerUrl.includes('export=download') ||
+                   lowerUrl.includes('drive.google.com/file');
+        }
+
+        // Hàm dựng Thẻ Media HTML chuẩn hoá Ảnh / Video
+        function buildMediaTag(item, isSlider = false) {
+            const src = typeof item === 'object' ? item.url : item;
+            const driveId = getDriveId(src);
+
+            // 1. Video Google Drive (Nhúng iframe preview)
+            if (driveId && isVideoMedia(item)) {
+                return `
+                    <iframe src="https://drive.google.com/file/d/${driveId}/preview" 
+                            style="width:100%; height:300px; border:none; border-radius:12px; display:block;" 
+                            allow="autoplay" allowfullscreen>
+                    </iframe>
+                `;
+            }
+
+            // 2. Video Link trực tiếp (.mp4, .mov...)
+            if (isVideoMedia(item)) {
+                return `
+                    <video controls playsinline preload="metadata" style="width:100%; max-height:450px; border-radius:12px; object-fit:cover; display:block;">
+                        <source src="${src}" type="video/mp4">
+                        Trình duyệt của bạn không hỗ trợ phát video.
+                    </video>
+                `;
+            }
+
+            // 3. Ảnh từ Google Drive
+            if (driveId) {
+                const imgUrl = `https://lh3.googleusercontent.com/d/${driveId}`;
+                const imgClass = isSlider ? "slider-image zoomable" : "post-image zoomable";
+                return `<img src="${imgUrl}" class="${imgClass}" loading="lazy" alt="Kỷ niệm">`;
+            }
+
+            // 4. Ảnh Link trực tiếp
+            const imgClass = isSlider ? "slider-image zoomable" : "post-image zoomable";
+            return `<img src="${src}" class="${imgClass}" loading="lazy" alt="Kỷ niệm">`;
+        }
+
         function isPostApproved(item) {
-            const statusKeys = ['status', 'trangThai', 'Trạng thái', 'Trạng Thái', 'approved', 'Approved', 'Duyệt', 'duyet', 'Status', 'isApproved'];
+            const statusKeys = ['status', 'trangThai', 'Trạng thái', 'Trạng Thái', 'approved', 'Approved', 'Status'];
             let rawStatus = undefined;
 
             for (const key of statusKeys) {
@@ -231,28 +261,14 @@
 
             if (rawStatus !== undefined) {
                 if (typeof rawStatus === 'boolean') return rawStatus;
-                
                 const st = String(rawStatus).toLowerCase().trim();
-                
-                if (st === "" || st === "chờ duyệt" || st === "cho duyet" || st === "pending" || st === "từ chối" || st === "tu choi" || st === "rejected" || st === "0" || st === "false" || st === "ẩn" || st === "hidden") {
-                    return false;
-                }
-                
-                if (st === "đã duyệt" || st === "da duyet" || st === "approved" || st === "active" || st === "duyệt" || st === "duyet" || st === "1" || st === "true") {
-                    return true;
-                }
-
-                if ((st.includes("duyệt") || st.includes("approved")) && !st.includes("chờ")) {
-                    return true;
-                }
-
-                return false;
+                if (st === "" || st === "chờ duyệt" || st === "pending" || st === "false" || st === "0") return false;
+                if (st === "đã duyệt" || st === "approved" || st === "true" || st === "1") return true;
+                return !st.includes("chờ");
             }
-
             return true;
         }
 
-        // Định dạng và đọc Ngày Tháng an toàn
         function parsePostDate(timeStr) {
             if (!timeStr) return null;
             let d = new Date(timeStr);
@@ -275,19 +291,16 @@
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const hours = String(d.getHours()).padStart(2, '0');
             const mins = String(d.getMinutes()).padStart(2, '0');
-
             const weekdays = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
-            const weekday = weekdays[d.getDay()];
 
             return {
                 filterValue: `${day}/${month}`,
-                label: `${weekday} ${day}/${month}`,
+                label: `${weekdays[d.getDay()]} ${day}/${month}`,
                 displayTime: `${hours}:${mins}, ${day}/${month}`,
                 timestamp: d.getTime()
             };
         }
 
-        // Dynamic Filter Buttons
         function renderDynamicFilterButtons(postsData) {
             const container = document.getElementById("filterContainer");
             if (!container) return;
@@ -319,7 +332,6 @@
             });
         }
 
-        // 3. Tải bài viết & Sắp xếp từ MỚI NHẤT ➔ CŨ NHẤT
         function loadPosts() {
             fetch(`${scriptURL}?action=gallery`)
                 .then(res => res.json())
@@ -330,30 +342,26 @@
                         return;
                     }
 
-                    // 1. Chỉ giữ bài đã duyệt
                     allApprovedPosts = data.filter(isPostApproved);
 
-                    // 🟢 2. SẮP XẾP CHÍNH XÁC TỪ MỚI NHẤT -> CŨ NHẤT Theo Timestamp
                     allApprovedPosts.sort((a, b) => {
                         const dateA = parsePostDate(a.time);
                         const dateB = parsePostDate(b.time);
                         const tA = dateA ? dateA.timestamp : 0;
                         const tB = dateB ? dateB.timestamp : 0;
-                        return tB - tA; // Timestamp lớn hơn (mới hơn) đứng trước
+                        return tB - tA;
                     });
 
                     renderDynamicFilterButtons(allApprovedPosts);
-
                     currentFilter = "all";
                     applyFilterAndRender();
                 })
                 .catch(err => {
                     console.error("Lỗi tải Gallery:", err);
-                    document.getElementById("posts").innerHTML = `<p class="error-msg" style="color:#ff6b6b; text-align: center; width: 100%;">⚠️ Không thể tải khoảnh khắc. Vui lòng kiểm tra kết nối mạng!</p>`;
+                    document.getElementById("posts").innerHTML = `<p class="error-msg" style="color:#ff6b6b; text-align: center; width: 100%;">⚠️ Không thể tải khoảnh khắc. Vui lòng kiểm tra kết nối!</p>`;
                 });
         }
 
-        // 4. Lọc bài đăng
         function applyFilterAndRender() {
             if (currentFilter === "all") {
                 filteredPosts = [...allApprovedPosts];
@@ -368,7 +376,6 @@
             renderGallery();
         }
 
-        // 5. Render Thẻ Bài Đăng
         function renderGallery() {
             const postsContainer = document.getElementById("posts");
             const likedPosts = JSON.parse(localStorage.getItem("liked_gallery_posts") || "[]");
@@ -398,7 +405,7 @@
                 } else if (imageList.length === 1) {
                     imageHTML = `
                         <div class="post-media" data-post-id="${postId}">
-                            <img src="${imageList[0]}" class="post-image zoomable" loading="lazy" alt="Ảnh kỷ niệm">
+                            ${buildMediaTag(imageList[0], false)}
                         </div>
                     `;
                 } else {
@@ -406,14 +413,14 @@
                     imageHTML = `
                         <div class="post-media slider" data-post-id="${postId}" data-images='${safeImages}'>
                             <button class="slider-btn prev" type="button">‹</button>
-                            <img src="${imageList[0]}" class="slider-image zoomable" loading="lazy" alt="Ảnh kỷ niệm">
+                            ${buildMediaTag(imageList[0], true)}
                             <button class="slider-btn next" type="button">›</button>
                             <div class="slider-counter">1 / ${imageList.length} 📸</div>
                         </div>
                     `;
                 }
 
-                const avatarEmoji = getRandomAvatar(post.name);
+                const avatarEmoji = getRandomAvatar(post.name || post.author);
                 const initialLikes = post.likes || 0;
 
                 htmlContent += `
@@ -423,7 +430,7 @@
                                 <div class="user-avatar">${avatarEmoji}</div>
                             </div>
                             <div class="user-info">
-                                <strong class="user-name">${post.name || "Trại sinh ẩn danh"}</strong>
+                                <strong class="user-name">${post.name || post.author || "Trại sinh ẩn danh"}</strong>
                                 <span class="post-time">🕒 ${displayTime}</span>
                             </div>
                         </header>
@@ -453,7 +460,6 @@
             updateLoadMoreBtn();
         }
 
-        // 6. Nút Load More
         function updateLoadMoreBtn() {
             const loadMoreWrap = document.getElementById("loadMoreWrap");
             if (!loadMoreWrap) return;
@@ -470,12 +476,11 @@
             renderGallery();
         }
 
-        // 7. Double tap to Like
         function initDoubleTapToLike() {
             document.querySelectorAll(".post-media").forEach(mediaEl => {
                 let lastTap = 0;
                 mediaEl.addEventListener("click", function (e) {
-                    if (e.target.classList.contains("slider-btn")) return;
+                    if (e.target.classList.contains("slider-btn") || e.target.tagName === 'VIDEO' || e.target.tagName === 'IFRAME') return;
 
                     const currentTime = new Date().getTime();
                     const tapLength = currentTime - lastTap;
@@ -498,21 +503,24 @@
             heart.className = "heart-overlay";
             heart.innerHTML = "💖";
             container.appendChild(heart);
-
             setTimeout(() => { heart.remove(); }, 800);
         }
 
-        // 8. Sliders
         function initSliders() {
             document.querySelectorAll(".slider").forEach(slider => {
                 if (!slider.dataset.images) return;
                 const images = JSON.parse(slider.dataset.images);
                 let index = 0;
-                const img = slider.querySelector(".slider-image");
                 const counter = slider.querySelector(".slider-counter");
 
                 const updateSlider = () => {
-                    img.src = images[index];
+                    let currentMedia = slider.querySelector("img, video, iframe");
+                    if (currentMedia) {
+                        const tempWrap = document.createElement('div');
+                        tempWrap.innerHTML = buildMediaTag(images[index], true);
+                        const newMedia = tempWrap.firstElementChild;
+                        currentMedia.replaceWith(newMedia);
+                    }
                     counter.textContent = `${index + 1} / ${images.length} 📸`;
                 };
 
@@ -534,35 +542,9 @@
                         updateSlider();
                     };
                 }
-
-                let touchStartX = 0;
-                let touchStartY = 0;
-
-                slider.addEventListener("touchstart", (e) => {
-                    touchStartX = e.changedTouches[0].clientX;
-                    touchStartY = e.changedTouches[0].clientY;
-                }, { passive: true });
-
-                slider.addEventListener("touchend", (e) => {
-                    const touchEndX = e.changedTouches[0].clientX;
-                    const touchEndY = e.changedTouches[0].clientY;
-
-                    const diffX = touchEndX - touchStartX;
-                    const diffY = touchEndY - touchStartY;
-
-                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
-                        if (diffX < 0) {
-                            index = (index + 1) % images.length;
-                        } else {
-                            index = (index - 1 + images.length) % images.length;
-                        }
-                        updateSlider();
-                    }
-                }, { passive: true });
             });
         }
 
-        // 9. Lightbox Modal
         document.addEventListener("DOMContentLoaded", () => {
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("modalImg");
@@ -588,7 +570,6 @@
             loadPosts();
         });
 
-        // 10. Toggle Like
         function toggleLike(btn, postId) {
             btn.classList.toggle("liked");
             const countSpan = btn.querySelector(".like-count");
@@ -624,7 +605,6 @@
             }).catch(err => console.log("Lỗi lưu tim:", err));
         }
 
-        // 11. Toast
         function showToast(message) {
             const toast = document.getElementById("toast");
             if (!toast) return;
@@ -635,14 +615,21 @@
             }, 2500);
         }
 
-        // 12. SW
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('../sw.js')
-                    .then(reg => console.log('SW đăng ký thành công!'))
-                    .catch(err => console.log('Lỗi đăng ký SW:', err));
+                    .then(reg => console.log('SW thành công!'))
+                    .catch(err => console.log('Lỗi SW:', err));
             });
         }
+    </script>
+    <script src="../tracker.js"></script>
+    <script>
+        window.addEventListener("load", () => {
+            if (typeof logPageVisit === "function") {
+                logPageVisit("Khoảnh khắc");
+            }
+        });
     </script>
 </body>
 
