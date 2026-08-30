@@ -17,6 +17,89 @@
     <meta name="apple-mobile-web-app-title" content="BTN LX">
 
     <style>
+        /* Styling thanh thông báo chạy chữ bắt mắt */
+.announcement-bar {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #ffffff;
+    border-bottom: 2px solid #22c55e;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 10px 16px;
+    overflow: hidden;
+}
+
+.announcement-content {
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 12px;
+}
+
+.badge-live {
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    animation: pulse-glow 1.5s infinite;
+}
+
+.badge-upcoming {
+    background: #f59e0b;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.ticker-wrapper {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+.ticker-text {
+    display: inline-block;
+    white-space: nowrap;
+    padding-left: 100%;
+    animation: marquee-scroll 25s linear infinite;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Di chuột vào thanh thông báo sẽ tạm dừng để người dùng dễ đọc */
+.ticker-wrapper:hover .ticker-text {
+    animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+/* Kiểu dáng cho các đồng hồ đếm thời gian trong thanh chạy */
+.time-counter {
+    color: #38bdf8;
+    font-family: monospace, monospace;
+    font-weight: 700;
+    background: rgba(56, 189, 248, 0.15);
+    padding: 2px 6px;
+    border-radius: 6px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
         /* CSS ghim đồng hồ đếm ngược góc dưới màn hình */
         .sticky-countdown {
             position: fixed;
@@ -121,7 +204,7 @@
                     <img src="images/logo.png" alt="NGỜ YÊN NGHIÊNG">
                 </a>
             </div>
-        
+
             <button class="menu-toggle" aria-label="Toggle Navigation">☰</button>
             <div class="menu">
                 <a href="index.html" class="active">Home</a>
@@ -407,73 +490,163 @@
         // 3. LỊCH TRÌNH REALTIME & SERVICE WORKER
         // ----------------------------------------------------
         const campSchedule = [
-            {
-                start: "2026-08-30T07:00:00",
-                end: "2026-08-30T11:00:00",
-                title: "🚌 Tập trung tại Hội thánh & Di chuyển đến Buôn Ma Thuột"
-            },
-            {
-                start: "2026-08-30T11:00:00",
-                end: "2026-08-30T13:30:00",
-                title: "🍱 Đến nơi - Nhận phòng & Dùng cơm trưa"
-            },
-            {
-                start: "2026-08-30T13:30:00",
-                end: "2026-08-30T17:00:00",
-                title: "🔥 Lễ Khai Mạc Trại NGỜ YÊN NGHIÊNG & Sinh hoạt nhóm"
-            },
-            {
-                start: "2026-08-30T18:00:00",
-                end: "2026-08-30T19:30:00",
-                title: "🍽️ Dùng cơm tối"
-            },
-            {
-                start: "2026-08-30T19:30:00",
-                end: "2026-08-30T21:30:00",
-                title: "✨ Chương trình Nhóm Lại Bồi Linh Bồi Linh Dục Anh 1"
-            }
+            // NGÀY 0 (30/8)
+            { start: "2026-08-30T06:00:00", end: "2026-08-30T10:30:00", title: "Thờ phượng Chúa tại HTTL Linh Xuân" },
+            { start: "2026-08-30T10:30:00", end: "2026-08-30T11:00:00", title: "Tập trung" },
+            { start: "2026-08-30T11:00:00", end: "2026-08-30T21:00:00", title: "Lên núi" },
+            { start: "2026-08-30T21:00:00", end: "2026-08-30T21:30:00", title: "Ổn định & cất đồ" },
+            { start: "2026-08-30T21:30:00", end: "2026-08-30T22:30:00", title: "Nhóm nhỏ" },
+            { start: "2026-08-30T22:30:00", end: "2026-08-30T23:00:00", title: "Giới nghiêm" },
+            { start: "2026-08-30T23:00:00", end: "2026-08-31T05:00:00", title: "Zzz..." },
+
+            // NGÀY 1 (31/8)
+            { start: "2026-08-31T06:00:00", end: "2026-08-31T06:15:00", title: "Th thức dậy & ổn định" },
+            { start: "2026-08-31T06:15:00", end: "2026-08-31T07:00:00", title: "Tĩnh nguyện" },
+            { start: "2026-08-31T07:00:00", end: "2026-08-31T08:00:00", title: "Ăn sáng" },
+            { start: "2026-08-31T08:00:00", end: "2026-08-31T08:10:00", title: "Phá băng" },
+            { start: "2026-08-31T08:10:00", end: "2026-08-31T08:30:00", title: "Tôn vinh Chúa" },
+            { start: "2026-08-31T08:30:00", end: "2026-08-31T09:30:00", title: "Khai mạc" },
+            { start: "2026-08-31T09:30:00", end: "2026-08-31T10:20:00", title: "Học Kinh Thánh" },
+            { start: "2026-08-31T10:20:00", end: "2026-08-31T10:30:00", title: "Giải lao" },
+            { start: "2026-08-31T10:30:00", end: "2026-08-31T11:00:00", title: "“NGỜ” HAY “NHỜ”?" },
+            { start: "2026-08-31T11:00:00", end: "2026-08-31T12:00:00", title: "Ăn trưa" },
+            { start: "2026-08-31T12:00:00", end: "2026-08-31T13:30:00", title: "Nghỉ ngơi" },
+            { start: "2026-08-31T13:30:00", end: "2026-08-31T13:40:00", title: "Phá băng" },
+            { start: "2026-08-31T13:40:00", end: "2026-08-31T14:00:00", title: "Tôn vinh Chúa" },
+            { start: "2026-08-31T14:00:00", end: "2026-08-31T14:45:00", title: "Học Kinh Thánh" },
+            { start: "2026-08-31T14:45:00", end: "2026-08-31T15:00:00", title: "Giải lao" },
+            { start: "2026-08-31T15:00:00", end: "2026-08-31T17:00:00", title: "“TIN” HAY “NGỜ”?" },
+            { start: "2026-08-31T17:00:00", end: "2026-08-31T18:00:00", title: "Ăn tối" },
+            { start: "2026-08-31T18:00:00", end: "2026-08-31T19:30:00", title: "Tự do & viết thư" },
+            { start: "2026-08-31T19:30:00", end: "2026-08-31T21:30:00", title: "AI HAY CHỮ NGỜ?" },
+            { start: "2026-08-31T21:30:00", end: "2026-08-31T22:30:00", title: "NÓI BẠN TÔI NGỜ..." },
+            { start: "2026-08-31T22:30:00", end: "2026-08-31T23:00:00", title: "Giới nghiêm" },
+            { start: "2026-08-31T23:00:00", end: "2026-09-01T05:00:00", title: "Zzz..." },
+
+            // NGÀY 2 (01/9)
+            { start: "2026-09-01T06:00:00", end: "2026-09-01T06:15:00", title: "Thức dậy & ổn định" },
+            { start: "2026-09-01T06:15:00", end: "2026-09-01T07:00:00", title: "Tĩnh nguyện" },
+            { start: "2026-09-01T07:00:00", end: "2026-09-01T08:00:00", title: "Ăn sáng" },
+            { start: "2026-09-01T08:00:00", end: "2026-09-01T08:10:00", title: "Phá băng" },
+            { start: "2026-09-01T08:10:00", end: "2026-09-01T08:30:00", title: "Tôn vinh Chúa" },
+            { start: "2026-09-01T08:30:00", end: "2026-09-01T09:15:00", title: "Học Kinh Thánh" },
+            { start: "2026-09-01T09:15:00", end: "2026-09-01T09:30:00", title: "Giải lao" },
+            { start: "2026-09-01T09:30:00", end: "2026-09-01T11:00:00", title: "Workshop YÊN" },
+            { start: "2026-09-01T11:00:00", end: "2026-09-01T12:00:00", title: "Ăn trưa" },
+            { start: "2026-09-01T12:00:00", end: "2026-09-01T13:30:00", title: "Nghỉ ngơi" },
+            { start: "2026-09-01T13:30:00", end: "2026-09-01T13:40:00", title: "Tập trung" },
+            { start: "2026-09-01T13:40:00", end: "2026-09-01T14:00:00", title: "Di chuyển" },
+            { start: "2026-09-01T14:00:00", end: "2026-09-01T17:00:00", title: "Trò chơi lớn" },
+            { start: "2026-09-01T17:00:00", end: "2026-09-01T18:00:00", title: "Tự do & viết thư" },
+            { start: "2026-09-01T18:00:00", end: "2026-09-01T19:00:00", title: "Ăn tối" },
+            { start: "2026-09-01T19:00:00", end: "2026-09-01T20:30:00", title: "Lửa trại" },
+            { start: "2026-09-01T20:30:00", end: "2026-09-01T21:30:00", title: "BBQ" },
+            { start: "2026-09-01T21:30:00", end: "2026-09-01T22:30:00", title: "Dọn dẹp & ra về" },
+            { start: "2026-09-01T22:30:00", end: "2026-09-01T23:00:00", title: "Giới nghiêm" },
+            { start: "2026-09-01T23:00:00", end: "2026-09-02T05:00:00", title: "Zzz..." },
+
+            // NGÀY 3 (02/9)
+            { start: "2026-09-02T06:00:00", end: "2026-09-02T06:15:00", title: "Thức dậy & ổn định" },
+            { start: "2026-09-02T06:15:00", end: "2026-09-02T07:00:00", title: "Tĩnh nguyện" },
+            { start: "2026-09-02T07:00:00", end: "2026-09-02T08:00:00", title: "Ăn sáng" },
+            { start: "2026-09-02T08:00:00", end: "2026-09-02T08:10:00", title: "Phá băng" },
+            { start: "2026-09-02T08:10:00", end: "2026-09-02T08:30:00", title: "Tôn vinh Chúa" },
+            { start: "2026-09-02T08:30:00", end: "2026-09-02T09:15:00", title: "Học Kinh Thánh" },
+            { start: "2026-09-02T09:15:00", end: "2026-09-02T09:30:00", title: "Giải lao" },
+            { start: "2026-09-02T09:30:00", end: "2026-09-02T11:00:00", title: "NGHIÊNG VỀ CHỐN BÌNH YÊN" },
+            { start: "2026-09-02T11:00:00", end: "2026-09-02T12:00:00", title: "Ăn trưa" },
+            { start: "2026-09-02T12:00:00", end: "2026-09-02T13:30:00", title: "Nghỉ ngơi" },
+            { start: "2026-09-02T13:30:00", end: "2026-09-02T16:00:00", title: "Outing nhóm nhỏ & Viết thư" },
+            { start: "2026-09-02T16:00:00", end: "2026-09-02T17:00:00", title: "Tự do & viết thư" },
+            { start: "2026-09-02T17:00:00", end: "2026-09-02T18:00:00", title: "Ăn tối" },
+            { start: "2026-09-02T18:00:00", end: "2026-09-02T18:30:00", title: "Dọn đồ" },
+            { start: "2026-09-02T18:30:00", end: "2026-09-02T18:40:00", title: "Phá băng" },
+            { start: "2026-09-02T18:40:00", end: "2026-09-02T19:00:00", title: "Tôn vinh Chúa" },
+            { start: "2026-09-02T19:00:00", end: "2026-09-02T20:30:00", title: "Bế mạc" },
+            { start: "2026-09-02T20:30:00", end: "2026-09-02T21:00:00", title: "Dọn dẹp & vệ sinh" },
+            { start: "2026-09-02T21:00:00", end: "2026-09-02T23:00:00", title: "Xuống núi" }
         ];
+
+        // Hàm định dạng khoảng thời gian ra Giờ:Phút:Giây
+        function formatDuration(ms) {
+            if (ms < 0) ms = 0;
+            const totalSec = Math.floor(ms / 1000);
+            const hrs = Math.floor(totalSec / 3600);
+            const mins = Math.floor((totalSec % 3600) / 60);
+            const secs = totalSec % 60;
+
+            const pad = (n) => String(n).padStart(2, '0');
+
+            if (hrs > 0) {
+                return `${pad(hrs)}h ${pad(mins)}p ${pad(secs)}s`;
+            }
+            return `${pad(mins)}p ${pad(secs)}s`;
+        }
 
         function updateTimelineNotification() {
             const now = new Date();
             const bar = document.getElementById("announcementBar");
             const textEl = document.getElementById("announcementText");
+            const badgeEl = bar ? bar.querySelector(".badge-live") : null;
 
             if (!bar || !textEl) return;
 
-            const currentEvent = campSchedule.find(event => {
-                const start = new Date(event.start);
-                const end = new Date(event.end);
-                return now >= start && now <= end;
-            });
+            let currentIndex = -1;
+            for (let i = 0; i < campSchedule.length; i++) {
+                const start = new Date(campSchedule[i].start);
+                const end = new Date(campSchedule[i].end);
+                if (now >= start && now <= end) {
+                    currentIndex = i;
+                    break;
+                }
+            }
 
-            const upcomingEvent = campSchedule.find(event => {
-                const start = new Date(event.start);
-                const diffMinutes = (start - now) / (1000 * 60);
-                return diffMinutes > 0 && diffMinutes <= 30;
-            });
+            if (currentIndex !== -1) {
+                const currentEvent = campSchedule[currentIndex];
+                const nextEvent = campSchedule[currentIndex + 1];
 
-            if (currentEvent) {
+                // Đếm gian đã trôi qua kể từ khi sự kiện bắt đầu
+                const currentStart = new Date(currentEvent.start);
+                const elapsedTime = formatDuration(now - currentStart);
+
                 bar.style.display = "block";
-                textEl.innerHTML = `🟢 <strong>ĐANG DIỄN RA:</strong> ${currentEvent.title}`;
-            } else if (upcomingEvent) {
-                bar.style.display = "block";
-                textEl.innerHTML = `⏰ <strong>SẮP DIỄN RA (Trong 30 phút tới):</strong> ${upcomingEvent.title}`;
+                if (badgeEl) {
+                    badgeEl.textContent = "LIVE";
+                    badgeEl.className = "badge-live";
+                }
+
+                let displayText = `🔥 <strong>ĐANG DIỄN RA:</strong> ${currentEvent.title} (Đã chạy: <span class="time-counter">${elapsedTime}</span>)`;
+
+                if (nextEvent) {
+                    // Đếm ngược đến thời gian sự kiện tiếp theo
+                    const nextStart = new Date(nextEvent.start);
+                    const remainingTime = formatDuration(nextStart - now);
+                    displayText += ` &nbsp;&nbsp;•&nbsp;&nbsp; ⏳ <strong>SẮP TỚI:</strong> ${nextEvent.title} (Còn: <span class="time-counter">${remainingTime}</span>)`;
+                }
+
+                textEl.innerHTML = displayText;
             } else {
-                bar.style.display = "none";
+                // Tìm sự kiện tiếp theo chuẩn bị diễn ra
+                const upcomingEvent = campSchedule.find(ev => new Date(ev.start) > now);
+                if (upcomingEvent) {
+                    const upcomingStart = new Date(upcomingEvent.start);
+                    const remainingTime = formatDuration(upcomingStart - now);
+
+                    bar.style.display = "block";
+                    if (badgeEl) {
+                        badgeEl.textContent = "UPCOMING";
+                        badgeEl.className = "badge-upcoming";
+                    }
+                    textEl.innerHTML = `⏳ <strong>SẮP DIỄN RA:</strong> ${upcomingEvent.title} (Bắt đầu sau: <span class="time-counter">${remainingTime}</span>)`;
+                } else {
+                    bar.style.display = "none";
+                }
             }
         }
 
         updateTimelineNotification();
-        setInterval(updateTimelineNotification, 10000);
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('SW đã đăng ký thành công!'))
-                    .catch(err => console.log('Lỗi đăng ký SW:', err));
-            });
-        }
+        // Cập nhật lại mỗi 1000ms (1 giây) để đồng hồ chạy nhảy thời gian từng giây mượt mà
+        setInterval(updateTimelineNotification, 1000);
 
         // ----------------------------------------------------
         // 4. BẢO VỆ FRONTEND (CHẶN F12, CHUỘT PHẢI & DEVTOOLS)
@@ -730,7 +903,7 @@
             }
             localStorage.setItem("camp_user_name", selectedValue);
             document.getElementById("userModalOverlay").style.display = "none";
-            
+
             if (typeof logPageVisit === "function") {
                 logPageVisit("Trang chủ");
             }
@@ -752,11 +925,12 @@
             const formattedGuest = `[Khách] ${guestName}`;
             localStorage.setItem("camp_user_name", formattedGuest);
             document.getElementById("userModalOverlay").style.display = "none";
-            
+
             if (typeof logPageVisit === "function") {
                 logPageVisit("Trang chủ");
             }
         }
     </script>
 </body>
+
 </html>
