@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lịch trình - NGỜ YÊN NGHIÊNG</title>
+    <title>Lịch trình</title>
 
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" href="../images/icon.png">
@@ -17,6 +17,99 @@
     <meta name="apple-mobile-web-app-title" content="BTN LX">
 
     <style>
+        /* Banner Hoạt động hiện tại (Thiết kế mới) */
+.live-banner {
+    background: linear-gradient(135deg, #1b3d18 0%, #2d5a27 50%, #173814 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    padding: 18px 22px;
+    border-radius: 18px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 25px rgba(45, 90, 39, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+/* Vệt sáng hiệu ứng nền (Aura Glow) */
+.live-banner::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.live-banner .live-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.live-banner .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 77, 109, 0.18);
+    border: 1px solid rgba(255, 77, 109, 0.6);
+    color: #ff6b81;
+    font-size: 0.78rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    box-shadow: 0 0 12px rgba(255, 77, 109, 0.25);
+}
+
+/* Chấm đỏ phát sáng nhấp nháy */
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ff4d6d;
+    border-radius: 50%;
+    display: inline-block;
+    animation: live-pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes live-pulse {
+    0% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.8);
+    }
+    50% {
+        transform: scale(1.25);
+        box-shadow: 0 0 0 8px rgba(255, 77, 109, 0);
+    }
+    100% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(255, 77, 109, 0);
+    }
+}
+
+.live-banner h3 {
+    margin: 8px 0 4px 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.live-banner p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.92rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
         /* CSS Bộ lọc Chọn Ngày */
         .schedule-controls {
             display: flex;
@@ -76,9 +169,17 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         /* Style Bảng Lịch trình Tối ưu */
@@ -177,6 +278,7 @@
         }
 
         @media (max-width: 600px) {
+
             .schedule th,
             .schedule td {
                 padding: 8px 10px;
@@ -204,7 +306,7 @@
 
             <div class="menu">
                 <a href="../index.html">Home</a>
-                <a href="schedule.html"class="active">Lịch trình</a>
+                <a href="schedule.html" class="active">Lịch trình</a>
                 <a href="groups.html">Danh sách nhóm</a>
                 <a href="room.html">Sắp xếp phòng</a>
                 <a href="song.html">Bài hát trại</a>
@@ -225,11 +327,15 @@
             </section>
 
             <!-- Thẻ thông báo hoạt động đang diễn ra -->
-            <div id="liveBanner" class="live-banner" style="display: none;">
-                <div class="live-badge">🔴 ĐANG DIỄN RA</div>
-                <h3 id="liveTitle" style="margin: 4px 0; font-size: 1.1rem;">-</h3>
-                <p id="liveTime" style="margin: 0; opacity: 0.9; font-size: 0.85rem;">🕒 -</p>
-            </div>
+<div id="liveBanner" class="live-banner" style="display: none;">
+    <div class="live-header">
+        <div class="live-badge">
+            <span class="live-dot"></span> ĐANG DIỄN RA
+        </div>
+    </div>
+    <h3 id="liveTitle">-</h3>
+    <p id="liveTime">🕒 -</p>
+</div>
 
             <!-- Bộ lọc chọn ngày -->
             <div class="schedule-controls">
@@ -654,7 +760,12 @@
                     const [endH, endM] = times[1].split(":").map(Number);
 
                     const startTime = new Date(currentYear, month, day, startH, startM);
-                    const endTime = new Date(currentYear, month, day, endH, endM);
+                    let endTime = new Date(currentYear, month, day, endH, endM);
+
+                    // Nếu giờ kết thúc nhỏ hơn giờ bắt đầu (VD: 23:00 - 05:00), cộng thêm 1 ngày
+                    if (endH < startH) {
+                        endTime.setDate(endTime.getDate() + 1);
+                    }
 
                     const oldTag = titleCell.querySelector(".status-tag");
                     if (oldTag) oldTag.remove();
@@ -687,7 +798,7 @@
                 });
             });
 
-            if (!foundActive) {
+            if (!foundActive && liveBanner) {
                 liveBanner.style.display = "none";
             }
         }
