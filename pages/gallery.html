@@ -17,13 +17,35 @@
     <meta name="apple-mobile-web-app-title" content="BTN LX">
 
     <style>
+        /* Thu gọn khoảng cách ở đuôi bài viết (Post Card) */
+        .post-card-body {
+            padding-top: 8px !important;
+            padding-bottom: 4px !important;
+        }
+
+        .post-caption {
+            margin: 0 !important;
+        }
+
+        /* Ẩn bớt khoảng trống nếu bài viết không có caption */
+        .post-caption:empty {
+            display: none !important;
+        }
+
+        .post-card-footer {
+            padding-top: 4px !important;
+            padding-bottom: 10px !important;
+            margin-top: 0 !important;
+        }
+
         .posts-grid {
             display: block !important;
             column-count: 3;
             column-gap: 20px;
         }
 
-        .post-card, .skeleton-card {
+        .post-card,
+        .skeleton-card {
             break-inside: avoid;
             page-break-inside: avoid;
             -webkit-column-break-inside: avoid;
@@ -38,7 +60,9 @@
                 column-count: 2;
                 column-gap: 15px;
             }
-            .post-card, .skeleton-card {
+
+            .post-card,
+            .skeleton-card {
                 margin-bottom: 15px;
             }
         }
@@ -80,7 +104,14 @@
         <section class="page-title glass text-center">
             <span class="page-title-badge">✨ MEMORIES GALLERY</span>
             <h1>Khoảnh khắc Kỷ niệm 📸</h1>
-            <p>Lưu giữ từng nụ cười và hành trình đáng nhớ tại trại.</p>
+            <p>Lưu giữ từng nụ cười và hành trình đáng nhớ tại kỳ trại.</p>
+
+            <!-- Lời nhắn thân thiện gửi trại sinh -->
+            <p style="font-size: 0.85rem; opacity: 0.9; margin-top: 8px; line-height: 1.4; color: #4c7840;">
+                📌 <i><b>Lưu ý nhỏ:</b> Do giới hạn lưu trữ của hệ thống, trang web hiện tại chỉ hỗ trợ đăng tải <b>hình
+                        ảnh</b>. BTC rất mong các bạn trại sinh thông cảm cho sự bất tiện này nhé! ❤️</i>
+            </p>
+
             <div id="postCount" class="gallery-count-pill" style="margin-top:15px;">
                 📸 Đang tải dữ liệu...
             </div>
@@ -106,13 +137,15 @@
             </div>
 
             <div id="loadMoreWrap" style="text-align: center; margin: 30px 0; display: none;">
-                <button id="loadMoreBtn" class="action-btn" onclick="handleLoadMore()" style="padding: 12px 28px; font-size: 1rem; cursor: pointer;">
+                <button id="loadMoreBtn" class="action-btn" onclick="handleLoadMore()"
+                    style="padding: 12px 28px; font-size: 1rem; cursor: pointer;">
                     📥 Xem thêm khoảnh khắc
                 </button>
             </div>
         </section>
 
-        <a href="https://forms.gle/Zti5JjRxk8KxdCaSA" target="_blank" rel="noopener" class="floating-upload-btn" title="Đăng ảnh ngay">
+        <a href="https://forms.gle/Zti5JjRxk8KxdCaSA" target="_blank" rel="noopener" class="floating-upload-btn"
+            title="Đăng ảnh ngay">
             <span class="fab-icon">📤</span>
             <span class="fab-text">Gửi ảnh kỷ niệm</span>
         </a>
@@ -150,10 +183,10 @@
         const scriptURL = "https://script.google.com/macros/s/AKfycbwK9Fs_PEFXXcHyH7h1DPxjNuKlIXnaPBjZdlZIiAeEd_ydjKB-yz-0f224P62ET1S6Lw/exec";
         const avatars = ["🏕️", "🔥", "🌻", "🌟", "📸", "🎒", "⛺"];
 
-        let allApprovedPosts = []; 
-        let filteredPosts = [];    
+        let allApprovedPosts = [];
+        let filteredPosts = [];
         let currentPage = 1;
-        const POSTS_PER_PAGE = 6;  
+        const POSTS_PER_PAGE = 6;
         let currentFilter = "all";
 
         function getRandomAvatar(name) {
@@ -176,7 +209,7 @@
                 if (raw.startsWith('[') && raw.endsWith(']')) {
                     try {
                         return JSON.parse(raw);
-                    } catch (e) {}
+                    } catch (e) { }
                 }
 
                 if (raw.includes(',') || raw.includes('\n')) {
@@ -203,12 +236,12 @@
             if (typeof item === 'object' && item.type === 'video') return true;
             const url = typeof item === 'object' ? item.url : String(item);
             const lowerUrl = url.toLowerCase();
-            return lowerUrl.includes('.mp4') || 
-                   lowerUrl.includes('.mov') || 
-                   lowerUrl.includes('.webm') ||
-                   lowerUrl.includes('/preview') ||
-                   lowerUrl.includes('export=download') ||
-                   lowerUrl.includes('drive.google.com/file');
+            return lowerUrl.includes('.mp4') ||
+                lowerUrl.includes('.mov') ||
+                lowerUrl.includes('.webm') ||
+                lowerUrl.includes('/preview') ||
+                lowerUrl.includes('export=download') ||
+                lowerUrl.includes('drive.google.com/file');
         }
 
         // Hàm dựng Thẻ Media HTML chuẩn hoá Ảnh / Video
@@ -219,21 +252,21 @@
             // 1. Video Google Drive (Nhúng iframe preview)
             if (driveId && isVideoMedia(item)) {
                 return `
-                    <iframe src="https://drive.google.com/file/d/${driveId}/preview" 
-                            style="width:100%; height:300px; border:none; border-radius:12px; display:block;" 
-                            allow="autoplay" allowfullscreen>
-                    </iframe>
-                `;
+            <iframe src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1" 
+                    style="width:100%; height:300px; border:none; border-radius:12px; display:block;" 
+                    allow="autoplay" allowfullscreen>
+            </iframe>
+        `;
             }
 
-            // 2. Video Link trực tiếp (.mp4, .mov...)
+            // 2. Video Link trực tiếp (.mp4, .mov...) - Thêm autoplay, muted, loop, playsinline
             if (isVideoMedia(item)) {
                 return `
-                    <video controls playsinline preload="metadata" style="width:100%; max-height:450px; border-radius:12px; object-fit:cover; display:block;">
-                        <source src="${src}" type="video/mp4">
-                        Trình duyệt của bạn không hỗ trợ phát video.
-                    </video>
-                `;
+            <video autoplay muted loop playsinline controls style="width:100%; max-height:450px; border-radius:12px; object-fit:cover; display:block;">
+                <source src="${src}" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ phát video.
+            </video>
+        `;
             }
 
             // 3. Ảnh từ Google Drive
