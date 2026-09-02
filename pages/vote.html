@@ -17,6 +17,88 @@
     <meta name="apple-mobile-web-app-title" content="BTN LX">
 
     <style>
+        /* --- KHUNG TOP 3 DẪN ĐẦU (GIAO DIỆN MỚI) --- */
+        .top-voted-badge {
+            background: linear-gradient(135deg, #fffbf0 0%, #fff3e0 100%);
+            border: 1px solid #ffe0b2;
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-top: 12px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 3px 10px rgba(230, 81, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            align-items: stretch;
+            text-align: left;
+        }
+
+        .top-voted-badge .top-title {
+            font-weight: 800;
+            color: #e65100;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: left;
+            gap: 6px;
+            text-transform: uppercase;
+        }
+
+        .top-voted-badge .top-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            color: #333333;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease;
+        }
+
+        /* Nổi bật vị trí Hạng 1 */
+        .top-voted-badge .top-item:first-of-type {
+            background: linear-gradient(135deg, #fffde7 0%, #fff59d 100%);
+            border: 1px solid #fbc02d;
+            font-weight: 700;
+        }
+
+        .top-voted-badge .top-item span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Badge hiển thị số lượt Vote dịu mắt */
+        .top-voted-badge .top-item strong {
+            background: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ffe0b2;
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        /* Badge số vote dành riêng cho Top 1 */
+        .top-voted-badge .top-item:first-of-type strong {
+            background: #ffe0b2;
+            color: #bf360c;
+            border: 1px solid #ffcc80;
+            box-shadow: none;
+        }
+
+        /* Nhãn hiển thị TOP 1, TOP 2, TOP 3 */
+        .rank-tag {
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: #d84315;
+            margin-right: 4px;
+        }
+
         .vote-card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 18px;
@@ -59,25 +141,6 @@
             font-size: 0.85rem;
             color: #666;
             margin: 4px 0 0 0;
-        }
-
-        .top-voted-badge {
-            background: #fff3e0;
-            color: #e65100;
-            border: 1px solid #ffe0b2;
-            padding: 6px 12px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 8px;
-        }
-
-        .top-voted-badge span {
-            color: #b71c1c;
-            font-weight: 800;
         }
 
         .vote-form {
@@ -340,8 +403,7 @@
             });
         }
 
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYbjBGWehitNNZPagmqhxMdi6Ns3bkJmAwZgpy1X7D3y-FX6h-0sUmrYpRCkop2s58Og/exec";
-
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKe39vr_ntNXkD4nU3hOljViGXD8-bsYhMgWqMXXj5F-1QpN1BCM3oPaU2ElIfrw8ICA/exec";
         let localVotes = JSON.parse(localStorage.getItem("camp_votes") || "{}");
 
         function getSavedVoterName() {
@@ -420,23 +482,54 @@
                 const result = await res.json();
 
                 if (result.status === "success" && result.data) {
+                    const rankLabels = ["🥇 TOP 1", "🥈 TOP 2", "🥉 TOP 3"];
+
                     for (let cat in result.data) {
                         const topBox = document.getElementById(`top_${cat}`);
-                        if (topBox) {
-                            const info = result.data[cat];
-                            const span = topBox.querySelector("span");
-                            if (span) {
-                                if (info.topCandidate && info.votes > 0) {
-                                    span.textContent = `${info.topCandidate} (${info.votes} vote)`;
-                                } else {
-                                    span.textContent = "Chưa có lượt vote nào";
-                                }
-                            }
+                        if (!topBox) continue;
+
+                        let rawData = result.data[cat];
+                        let list = [];
+
+                        if (Array.isArray(rawData)) {
+                            list = rawData;
+                        } else if (rawData && Array.isArray(rawData.top3)) {
+                            list = rawData.top3;
+                        } else if (rawData && typeof rawData === 'object' && !rawData.topCandidate) {
+                            list = Object.keys(rawData).map(name => ({
+                                candidate: name,
+                                votes: rawData[name]
+                            })).sort((a, b) => b.votes - a.votes);
+                        } else if (rawData && rawData.topCandidate) {
+                            list = [{ candidate: rawData.topCandidate, votes: rawData.votes }];
+                        }
+
+                        const top3 = list.filter(item => (item.votes || item.count || 0) > 0).slice(0, 3);
+
+                        if (top3.length === 0) {
+                            topBox.innerHTML = `
+                        <div class="top-title">🔥 Top 3 Dẫn Đầu</div>
+                        <div style="font-size: 0.8rem; color: #888; margin-top: 2px;">Chưa có lượt vote nào</div>
+                    `;
+                        } else {
+                            let html = `<div class="top-title">🔥 Top 3 Dẫn Đầu</div>`;
+                            top3.forEach((item, index) => {
+                                const name = item.candidate || item.name || item.topCandidate || "Ẩn danh";
+                                const count = item.votes || item.count || 0;
+                                const rankText = rankLabels[index] || `TOP ${index + 1}`;
+                                html += `
+                            <div class="top-item">
+                                <span><span class="rank-tag">${rankText}:</span> <b>${name}</b></span>
+                                <strong>${count} vote</strong>
+                            </div>
+                        `;
+                            });
+                            topBox.innerHTML = html;
                         }
                     }
                 }
             } catch (err) {
-                console.error("Lỗi tải người dẫn đầu:", err);
+                console.error("Lỗi tải danh sách dẫn đầu:", err);
             }
         }
 
