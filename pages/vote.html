@@ -17,7 +17,6 @@
     <meta name="apple-mobile-web-app-title" content="BTN LX">
 
     <style>
-        /* --- KHUNG TOP 3 DẪN ĐẦU (GIAO DIỆN MỚI) --- */
         .top-voted-badge {
             background: linear-gradient(135deg, #fffbf0 0%, #fff3e0 100%);
             border: 1px solid #ffe0b2;
@@ -29,7 +28,7 @@
             flex-direction: column;
             gap: 8px;
             width: 100%;
-            align-items: stretch;
+            align-items: flex-start;
             text-align: left;
         }
 
@@ -39,7 +38,7 @@
             font-size: 0.85rem;
             letter-spacing: 0.3px;
             display: flex;
-            align-items: left;
+            align-items: center;
             gap: 6px;
             text-transform: uppercase;
         }
@@ -56,9 +55,10 @@
             border: 1px solid rgba(0, 0, 0, 0.05);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
             transition: transform 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        /* Nổi bật vị trí Hạng 1 */
         .top-voted-badge .top-item:first-of-type {
             background: linear-gradient(135deg, #fffde7 0%, #fff59d 100%);
             border: 1px solid #fbc02d;
@@ -71,7 +71,6 @@
             gap: 6px;
         }
 
-        /* Badge hiển thị số lượt Vote dịu mắt */
         .top-voted-badge .top-item strong {
             background: #fff3e0;
             color: #e65100;
@@ -83,7 +82,6 @@
             letter-spacing: 0.2px;
         }
 
-        /* Badge số vote dành riêng cho Top 1 */
         .top-voted-badge .top-item:first-of-type strong {
             background: #ffe0b2;
             color: #bf360c;
@@ -91,7 +89,6 @@
             box-shadow: none;
         }
 
-        /* Nhãn hiển thị TOP 1, TOP 2, TOP 3 */
         .rank-tag {
             font-weight: 800;
             font-size: 0.8rem;
@@ -107,10 +104,6 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
             margin-bottom: 24px;
             transition: all 0.3s ease;
-        }
-
-        .vote-card:hover {
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .vote-header {
@@ -146,11 +139,11 @@
         .vote-form {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             margin-top: 14px;
         }
 
-        .select-custom {
+        .input-custom {
             width: 100%;
             padding: 12px 16px;
             border-radius: 12px;
@@ -159,20 +152,27 @@
             font-weight: 600;
             outline: none;
             background: #fff;
+            box-sizing: border-box;
             transition: border-color 0.2s ease;
         }
 
-        .select-custom:focus {
+        .input-custom:focus {
             border-color: #2d5a27;
         }
 
-        .select-custom:disabled {
+        .input-custom:disabled {
             background-color: #f5f5f5;
             cursor: not-allowed;
             color: #555;
         }
 
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
         .btn-vote {
+            flex: 1;
             background: linear-gradient(135deg, #2d5a27, #4b783f);
             color: #fff;
             border: none;
@@ -185,16 +185,29 @@
             box-shadow: 0 4px 12px rgba(45, 90, 39, 0.25);
         }
 
-        .btn-vote:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(45, 90, 39, 0.35);
-        }
-
         .btn-vote:disabled {
             background: #a5d6a7;
             color: #2e7d32;
             cursor: not-allowed;
             box-shadow: none;
+        }
+
+        /* Đổi màu chữ và nền nút Chọn lại để hiển thị rõ ràng */
+        .btn-reset-cat {
+            background: #1b5e20;
+            color: #a5d6a7;
+            border: 1.5px solid #2d5a27;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-reset-cat:hover {
+            background: #2d5a27;
+            color: #ffffff;
         }
 
         .vote-status {
@@ -205,7 +218,6 @@
             padding: 6px 12px;
             border-radius: 8px;
             display: inline-block;
-            margin-top: 8px;
         }
 
         .voter-info-box {
@@ -221,20 +233,46 @@
             color: #856404;
             font-size: 1.05rem;
         }
+
+        .deadline-banner {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 8px rgba(198, 40, 40, 0.1);
+        }
+
+        .countdown-time {
+            color: #d32f2f;
+            font-weight: 800;
+            font-family: monospace, sans-serif;
+            font-size: 1.1rem;
+            background: #fff;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #ffcdd2;
+            margin-left: 6px;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Datalist chứa toàn bộ tên trại sinh để tự gợi ý khi gõ -->
+    <datalist id="membersDatalist"></datalist>
+
     <header>
         <nav>
             <div class="logo">
                 <a href="../index.html">
-                    <img src="../images/logo.png" alt="NGỜ YÊN NGHIÊNG">
+                    <img src="../images/icon.png" alt="NGỜ YÊN NGHIÊNG">
                 </a>
             </div>
-
             <button class="menu-toggle" aria-label="Toggle Navigation">☰</button>
-
             <div class="menu">
                 <a href="../index.html">Home</a>
                 <a href="schedule.html">Lịch trình</a>
@@ -256,17 +294,13 @@
             <p>Mỗi trại sinh chỉ bình chọn 1 lần duy nhất cho mỗi giải (không được tự chọn bản thân).</p>
         </section>
 
-        <div class="voter-info-box">
-            <h3>👤 Người bình chọn: <span id="voterNameDisplay" style="color: #2d5a27; font-weight: 800;">Đang kiểm
-                    tra...</span></h3>
-            <p id="voterNote" style="font-size: 0.85rem; color: #666; margin: 4px 0 0 0;">Tên của bạn được tự động ghi
-                nhận từ hệ thống.</p>
+        <div id="deadlineBanner" class="deadline-banner">
+            ⏳ Đang tính thời gian đếm ngược...
+        </div>
 
-            <!-- Thêm nút Reset ở đây -->
-            <button onclick="resetMyVotes()"
-                style="margin-top: 10px; background: #d32f2f; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                🔄 Xoá lịch sử vote để chọn lại
-            </button>
+        <div class="voter-info-box">
+            <h3>👤 Người bình chọn: <span id="voterNameDisplay" style="color: #2d5a27; font-weight: 800;">Đang kiểm tra...</span></h3>
+            <p id="voterNote" style="font-size: 0.85rem; color: #666; margin: 4px 0 0 0;">Tên của bạn được tự động ghi nhận từ hệ thống.</p>
         </div>
 
         <!-- Các Hạng Mục Bình Chọn -->
@@ -278,19 +312,18 @@
                     <span class="vote-icon">✨</span>
                     <div class="vote-title">
                         <h3>1. Visual Gây Nghiêng</h3>
-                        <p>Gương mặt thương hiệu xinh đẹp/điển trai đỉnh cao, làm ngã nghiêng mọi ánh nhìn trong kỳ
-                            trại!</p>
+                        <p>Gương mặt thương hiệu xinh đẹp/điển trai đỉnh cao, làm ngã nghiêng mọi ánh nhìn trong kỳ trại!</p>
                         <div class="top-voted-badge" id="top_Visual Gây Nghiêng">
                             🔥 Đang dẫn đầu: <span>Đang cập nhật...</span>
                         </div>
                     </div>
                 </div>
                 <div class="vote-form">
-                    <select class="select-custom member-select">
-                        <option value="">-- Chọn Trại Sinh --</option>
-                    </select>
-                    <button class="btn-vote" onclick="submitVote('Visual Gây Nghiêng')">🗳️ Bình Chọn Hạng Mục
-                        Này</button>
+                    <input type="text" class="input-custom member-input" list="membersDatalist" placeholder="🔍 Nhập hoặc chọn tên..." autocomplete="off">
+                    <div class="action-buttons">
+                        <button class="btn-vote" onclick="submitVote('Visual Gây Nghiêng')">🗳️ Bình Chọn</button>
+                        <button class="btn-reset-cat" onclick="resetSingleVote('Visual Gây Nghiêng')">🔄 Chọn lại</button>
+                    </div>
                     <div class="vote-status" id="status_Visual Gây Nghiêng" style="display:none;"></div>
                 </div>
             </div>
@@ -308,11 +341,11 @@
                     </div>
                 </div>
                 <div class="vote-form">
-                    <select class="select-custom member-select">
-                        <option value="">-- Chọn Trại Sinh --</option>
-                    </select>
-                    <button class="btn-vote" onclick="submitVote('Đại Sứ Thời Trang')">🗳️ Bình Chọn Hạng Mục
-                        Này</button>
+                    <input type="text" class="input-custom member-input" list="membersDatalist" placeholder="🔍 Nhập hoặc chọn tên..." autocomplete="off">
+                    <div class="action-buttons">
+                        <button class="btn-vote" onclick="submitVote('Đại Sứ Thời Trang')">🗳️ Bình Chọn</button>
+                        <button class="btn-reset-cat" onclick="resetSingleVote('Đại Sứ Thời Trang')">🔄 Chọn lại</button>
+                    </div>
                     <div class="vote-status" id="status_Đại Sứ Thời Trang" style="display:none;"></div>
                 </div>
             </div>
@@ -323,19 +356,18 @@
                     <span class="vote-icon">🤡</span>
                     <div class="vote-title">
                         <h3>3. Mầm Non Giải Trí</h3>
-                        <p>Cây hài mới nổi của trại, quẩy hết mình, mở miệng phát ngôn câu nào là tạo mảng miếng gây
-                            cười câu đó!</p>
+                        <p>Cây hài mới nổi của trại, quẩy hết mình, mở miệng phát ngôn câu nào là tạo mảng miếng gây cười câu đó!</p>
                         <div class="top-voted-badge" id="top_Mầm Non Giải Trí">
                             🔥 Đang dẫn đầu: <span>Đang cập nhật...</span>
                         </div>
                     </div>
                 </div>
                 <div class="vote-form">
-                    <select class="select-custom member-select">
-                        <option value="">-- Chọn Trại Sinh --</option>
-                    </select>
-                    <button class="btn-vote" onclick="submitVote('Mầm Non Giải Trí')">🗳️ Bình Chọn Hạng Mục
-                        Này</button>
+                    <input type="text" class="input-custom member-input" list="membersDatalist" placeholder="🔍 Nhập hoặc chọn tên..." autocomplete="off">
+                    <div class="action-buttons">
+                        <button class="btn-vote" onclick="submitVote('Mầm Non Giải Trí')">🗳️ Bình Chọn</button>
+                        <button class="btn-reset-cat" onclick="resetSingleVote('Mầm Non Giải Trí')">🔄 Chọn lại</button>
+                    </div>
                     <div class="vote-status" id="status_Mầm Non Giải Trí" style="display:none;"></div>
                 </div>
             </div>
@@ -346,19 +378,18 @@
                     <span class="vote-icon">😈</span>
                     <div class="vote-title">
                         <h3>4. Chiến Thần Chơi Dơ</h3>
-                        <p>Bất chấp hình tượng để giành chiến thắng, sẵn sàng tung muôn vàn chiêu trò độc lạ và lăn xả
-                            hết mình!</p>
+                        <p>Bất chấp hình tượng để giành chiến thắng, sẵn sàng tung muôn vàn chiêu trò độc lạ và lăn xả hết mình!</p>
                         <div class="top-voted-badge" id="top_Chiến Thần Chơi Dơ">
                             🔥 Đang dẫn đầu: <span>Đang cập nhật...</span>
                         </div>
                     </div>
                 </div>
                 <div class="vote-form">
-                    <select class="select-custom member-select">
-                        <option value="">-- Chọn Trại Sinh --</option>
-                    </select>
-                    <button class="btn-vote" onclick="submitVote('Chiến Thần Chơi Dơ')">🗳️ Bình Chọn Hạng Mục
-                        Này</button>
+                    <input type="text" class="input-custom member-input" list="membersDatalist" placeholder="🔍 Nhập hoặc chọn tên..." autocomplete="off">
+                    <div class="action-buttons">
+                        <button class="btn-vote" onclick="submitVote('Chiến Thần Chơi Dơ')">🗳️ Bình Chọn</button>
+                        <button class="btn-reset-cat" onclick="resetSingleVote('Chiến Thần Chơi Dơ')">🔄 Chọn lại</button>
+                    </div>
                     <div class="vote-status" id="status_Chiến Thần Chơi Dơ" style="display:none;"></div>
                 </div>
             </div>
@@ -369,19 +400,18 @@
                     <span class="vote-icon">🤝</span>
                     <div class="vote-title">
                         <h3>5. Đại Sứ Ngoại Giao</h3>
-                        <p>Thánh xã giao thân thiện, bắt chuyện siêu đỉnh, giao lưu kết nối khắp các nhóm, đi tới đâu
-                            quen tới đó!</p>
+                        <p>Thánh xã giao thân thiện, bắt chuyện siêu đỉnh, giao lưu kết nối khắp các nhóm, đi tới đâu quen tới đó!</p>
                         <div class="top-voted-badge" id="top_Đại Sứ Ngoại Giao">
                             🔥 Đang dẫn đầu: <span>Đang cập nhật...</span>
                         </div>
                     </div>
                 </div>
                 <div class="vote-form">
-                    <select class="select-custom member-select">
-                        <option value="">-- Chọn Trại Sinh --</option>
-                    </select>
-                    <button class="btn-vote" onclick="submitVote('Đại Sứ Ngoại Giao')">🗳️ Bình Chọn Hạng Mục
-                        Này</button>
+                    <input type="text" class="input-custom member-input" list="membersDatalist" placeholder="🔍 Nhập hoặc chọn tên..." autocomplete="off">
+                    <div class="action-buttons">
+                        <button class="btn-vote" onclick="submitVote('Đại Sứ Ngoại Giao')">🗳️ Bình Chọn</button>
+                        <button class="btn-reset-cat" onclick="resetSingleVote('Đại Sứ Ngoại Giao')">🔄 Chọn lại</button>
+                    </div>
                     <div class="vote-status" id="status_Đại Sứ Ngoại Giao" style="display:none;"></div>
                 </div>
             </div>
@@ -403,8 +433,53 @@
             });
         }
 
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKe39vr_ntNXkD4nU3hOljViGXD8-bsYhMgWqMXXj5F-1QpN1BCM3oPaU2ElIfrw8ICA/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHoTwNctLvhXDetSctwuJzcY922QOIvzTuxRYkqIf2pTwkb3kUALNsROaykI3iFv66fA/exec";
         let localVotes = JSON.parse(localStorage.getItem("camp_votes") || "{}");
+        let availableMembers = [];
+
+        // 1. Cập nhật hạn chót: 18:00:00 ngày 02/09/2026
+        const VOTE_DEADLINE = new Date("2026-09-02T18:00:00+07:00");
+
+        function isVotingClosed() {
+            return new Date() >= VOTE_DEADLINE;
+        }
+
+        // Đồng hồ đếm ngược thời gian thực
+        function startCountdownTimer() {
+            const banner = document.getElementById("deadlineBanner");
+
+            function updateClock() {
+                const now = new Date();
+                const diff = VOTE_DEADLINE - now;
+
+                if (diff <= 0) {
+                    banner.style.background = "#d32f2f";
+                    banner.style.color = "#fff";
+                    banner.innerHTML = "⛔ CỔNG BÌNH CHỌN ĐÃ ĐÓNG LÚC 18:00 HÔM NAY (02/09)!";
+
+                    document.querySelectorAll(".btn-vote").forEach(btn => {
+                        btn.disabled = true;
+                        btn.textContent = "🔒 Đã Đóng Vote";
+                    });
+                    document.querySelectorAll(".btn-reset-cat").forEach(btn => btn.style.display = "none");
+                    document.querySelectorAll(".member-input").forEach(input => input.disabled = true);
+                    return;
+                }
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                const hStr = String(hours).padStart(2, '0');
+                const mStr = String(minutes).padStart(2, '0');
+                const sStr = String(seconds).padStart(2, '0');
+
+                banner.innerHTML = `⏳ Hạn bình chọn: <b>18:00 hôm nay (02/09)</b> — Đóng cổng sau: <span class="countdown-time">${hStr}:${mStr}:${sStr}</span>`;
+            }
+
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
 
         function getSavedVoterName() {
             return localStorage.getItem("camp_user_name") ||
@@ -414,7 +489,41 @@
         }
 
         function cleanName(str) {
-            return String(str || "").replace(/\s*[\(\[\{-]?\s*(BĐH|BDH)\s*[\)\]\}]?/gi, '').trim();
+            return String(str || "")
+                .replace(/\s*[\(\[\{-]?\s*(BĐH|BDH)\s*[\)\]\}]?/gi, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function normalizeName(str) {
+            return cleanName(str).toLowerCase().normalize("NFC");
+        }
+
+        // Hàm xóa dấu tiếng Việt hỗ trợ tìm kiếm không dấu
+        function removeAccents(str) {
+            return String(str || "")
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+                .toLowerCase()
+                .trim();
+        }
+
+        function renderDatalist(filterQuery = "") {
+            const datalist = document.getElementById("membersDatalist");
+            datalist.innerHTML = "";
+
+            const cleanQuery = removeAccents(filterQuery);
+            const filtered = availableMembers.filter(name =>
+                cleanQuery === "" || removeAccents(name).includes(cleanQuery)
+            );
+
+            filtered.forEach(name => {
+                const opt = document.createElement("option");
+                opt.value = name;
+                datalist.appendChild(opt);
+            });
         }
 
         function initVoterInfo() {
@@ -436,8 +545,7 @@
                 const res = await fetch(`${SCRIPT_URL}?action=groups`);
                 const data = await res.json();
 
-                const voterName = cleanName(getSavedVoterName()).toLowerCase();
-                const memberSelects = document.querySelectorAll(".member-select");
+                const currentVoterNorm = normalizeName(getSavedVoterName());
                 let allMembers = [];
 
                 if (Array.isArray(data)) {
@@ -454,26 +562,27 @@
                     });
                 }
 
-                allMembers = [...new Set(allMembers)].filter(n => n.length > 0).sort();
+                availableMembers = [...new Set(allMembers)]
+                    .filter(n => n.length > 0 && normalizeName(n) !== currentVoterNorm)
+                    .sort();
 
-                memberSelects.forEach(sel => {
-                    sel.innerHTML = '<option value="">-- Chọn Trại Sinh --</option>';
-                    allMembers.forEach(name => {
-                        if (voterName && cleanName(name).toLowerCase() === voterName) {
-                            return; // Loại bản thân ra khỏi dropdown
-                        }
-                        const opt = document.createElement("option");
-                        opt.value = name;
-                        opt.textContent = name;
-                        sel.appendChild(opt);
-                    });
-                });
-
+                renderDatalist();
+                setupSearchInputListeners();
                 restoreUserVotes();
                 loadTopVotes();
+                startCountdownTimer();
             } catch (err) {
                 console.error("Lỗi tải danh sách trại sinh:", err);
             }
+        }
+
+        // Cập nhật datalist khi người dùng gõ tìm kiếm không dấu
+        function setupSearchInputListeners() {
+            document.querySelectorAll(".member-input").forEach(input => {
+                input.addEventListener("input", function () {
+                    renderDatalist(this.value);
+                });
+            });
         }
 
         async function loadTopVotes() {
@@ -508,9 +617,9 @@
 
                         if (top3.length === 0) {
                             topBox.innerHTML = `
-                        <div class="top-title">🔥 Top 3 Dẫn Đầu</div>
-                        <div style="font-size: 0.8rem; color: #888; margin-top: 2px;">Chưa có lượt vote nào</div>
-                    `;
+                                <div class="top-title">🔥 Top 3 Dẫn Đầu</div>
+                                <div style="font-size: 0.8rem; color: #888; margin-top: 2px;">Chưa có lượt vote nào</div>
+                            `;
                         } else {
                             let html = `<div class="top-title">🔥 Top 3 Dẫn Đầu</div>`;
                             top3.forEach((item, index) => {
@@ -518,11 +627,11 @@
                                 const count = item.votes || item.count || 0;
                                 const rankText = rankLabels[index] || `TOP ${index + 1}`;
                                 html += `
-                            <div class="top-item">
-                                <span><span class="rank-tag">${rankText}:</span> <b>${name}</b></span>
-                                <strong>${count} vote</strong>
-                            </div>
-                        `;
+                                    <div class="top-item">
+                                        <span><span class="rank-tag">${rankText}:</span> <b>${name}</b></span>
+                                        <strong>${count} vote</strong>
+                                    </div>
+                                `;
                             });
                             topBox.innerHTML = html;
                         }
@@ -539,12 +648,12 @@
             for (let category in localVotes) {
                 const card = document.querySelector(`.vote-card[data-category="${category}"]`);
                 if (card) {
-                    const select = card.querySelector("select");
-                    const btn = card.querySelector("button");
+                    const input = card.querySelector(".member-input");
+                    const btn = card.querySelector(".btn-vote");
 
-                    if (select) {
-                        select.value = localVotes[category];
-                        select.disabled = true;
+                    if (input) {
+                        input.value = localVotes[category];
+                        input.disabled = true;
                     }
 
                     if (btn) {
@@ -561,37 +670,89 @@
             }
         }
 
+        function resetSingleVote(category) {
+            if (isVotingClosed()) {
+                alert("⛔ Cổng bình chọn đã đóng lúc 18:00, không thể thay đổi lượt vote!");
+                return;
+            }
+
+            if (!localVotes[category]) {
+                alert("Mục này bạn chưa chọn nên không cần xoá!");
+                return;
+            }
+
+            if (confirm(`Bạn có muốn chọn lại cho mục "${category}"? Lượt vote cũ sẽ bị xoá và cập nhật mới.`)) {
+                delete localVotes[category];
+                localStorage.setItem("camp_votes", JSON.stringify(localVotes));
+
+                const card = document.querySelector(`.vote-card[data-category="${category}"]`);
+                if (card) {
+                    const input = card.querySelector(".member-input");
+                    const btn = card.querySelector(".btn-vote");
+                    const status = document.getElementById(`status_${category}`);
+
+                    if (input) {
+                        input.value = "";
+                        input.disabled = false;
+                        input.focus();
+                    }
+
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = "🗳️ Bình Chọn";
+                    }
+
+                    if (status) {
+                        status.style.display = "none";
+                        status.textContent = "";
+                    }
+                }
+            }
+        }
+
         async function submitVote(category) {
+            if (isVotingClosed()) {
+                alert("⛔ Cổng bình chọn đã đóng lúc 18:00 hôm nay!");
+                return;
+            }
+
             const voterName = getSavedVoterName();
             if (!voterName) {
                 alert("⚠️ Không tìm thấy tên người bình chọn! Vui lòng quay lại Trang chủ để chọn hoặc nhập tên trước khi vote.");
                 return;
             }
 
-            if (localVotes[category]) {
-                alert("⚠️ Bạn đã bình chọn cho hạng mục này rồi!");
-                return;
-            }
-
             const card = document.querySelector(`.vote-card[data-category="${category}"]`);
-            const select = card.querySelector("select");
-            const btn = card.querySelector("button");
-            const targetValue = select.value;
+            const input = card.querySelector(".member-input");
+            const btn = card.querySelector(".btn-vote");
+            const targetValue = cleanName(input.value);
 
             if (!targetValue) {
-                alert("⚠️ Vui lòng chọn 1 ứng viên!");
+                alert("⚠️ Vui lòng nhập hoặc chọn 1 ứng viên!");
                 return;
             }
 
-            if (cleanName(voterName).toLowerCase() === cleanName(targetValue).toLowerCase()) {
+            // Hỗ trợ tìm khớp tên dù người dùng nhập có dấu hay không có dấu
+            const matchName = availableMembers.find(m =>
+                removeAccents(m) === removeAccents(targetValue) ||
+                normalizeName(m) === normalizeName(targetValue)
+            );
+
+            if (!matchName) {
+                alert("⚠️ Tên ứng viên không đúng hoặc không có trong danh sách trại sinh!");
+                return;
+            }
+
+            if (normalizeName(voterName) === normalizeName(matchName)) {
                 alert("⚠️ Bạn không thể tự bình chọn cho chính bản thân mình!");
                 return;
             }
 
-            localVotes[category] = targetValue;
+            localVotes[category] = matchName;
             localStorage.setItem("camp_votes", JSON.stringify(localVotes));
 
-            select.disabled = true;
+            input.value = matchName;
+            input.disabled = true;
             btn.disabled = true;
             btn.textContent = "🔒 Đã Bình Chọn";
 
@@ -600,21 +761,27 @@
             status.textContent = "⌛ Đang ghi nhận vote...";
 
             try {
-                await fetch(SCRIPT_URL, {
+                const response = await fetch(SCRIPT_URL, {
                     method: "POST",
                     body: JSON.stringify({
                         action: "submit_vote",
                         voterName: voterName,
                         category: category,
-                        target: targetValue
+                        target: matchName
                     })
                 });
 
-                status.textContent = `✅ Đã chọn: ${targetValue}`;
+                const resData = await response.json();
+                if (resData.status === "error") {
+                    alert(resData.message);
+                    return;
+                }
+
+                status.textContent = `✅ Đã chọn: ${matchName}`;
                 alert("🎉 Đã lưu lượt bình chọn thành công!");
-                loadTopVotes(); // Cập nhật lại danh sách TOP 1 ngay lập tức
+                loadTopVotes();
             } catch (e) {
-                status.textContent = `✅ Đã chọn: ${targetValue}`;
+                status.textContent = `✅ Đã chọn: ${matchName}`;
             }
         }
 
@@ -627,13 +794,6 @@
                 logPageVisit("Bình chọn");
             }
         });
-
-        function resetMyVotes() {
-            if (confirm("Bạn có chắc muốn xoá dữ liệu vote cũ trên máy này để bình chọn lại?")) {
-                localStorage.removeItem("camp_votes");
-                location.reload();
-            }
-        }
     </script>
 </body>
 
