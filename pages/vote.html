@@ -192,7 +192,6 @@
             box-shadow: none;
         }
 
-        /* Đổi màu chữ và nền nút Chọn lại để hiển thị rõ ràng */
         .btn-reset-cat {
             background: #1b5e20;
             color: #a5d6a7;
@@ -437,8 +436,8 @@
         let localVotes = JSON.parse(localStorage.getItem("camp_votes") || "{}");
         let availableMembers = [];
 
-        // 1. Cập nhật hạn chót: 18:00:00 ngày 02/09/2026
-        const VOTE_DEADLINE = new Date("2026-09-02T18:00:00+07:00");
+        // 1. Cập nhật hạn chót: 18:30:00 ngày 02/09/2026
+        const VOTE_DEADLINE = new Date("2026-09-02T18:30:00+07:00");
 
         function isVotingClosed() {
             return new Date() >= VOTE_DEADLINE;
@@ -455,7 +454,7 @@
                 if (diff <= 0) {
                     banner.style.background = "#d32f2f";
                     banner.style.color = "#fff";
-                    banner.innerHTML = "⛔ CỔNG BÌNH CHỌN ĐÃ ĐÓNG LÚC 18:00 HÔM NAY (02/09)!";
+                    banner.innerHTML = "⛔ CỔNG BÌNH CHỌN ĐÃ ĐÓNG LÚC 18:30 HÔM NAY (02/09)!";
 
                     document.querySelectorAll(".btn-vote").forEach(btn => {
                         btn.disabled = true;
@@ -474,7 +473,7 @@
                 const mStr = String(minutes).padStart(2, '0');
                 const sStr = String(seconds).padStart(2, '0');
 
-                banner.innerHTML = `⏳ Hạn bình chọn: <b>18:00 hôm nay (02/09)</b> — Đóng cổng sau: <span class="countdown-time">${hStr}:${mStr}:${sStr}</span>`;
+                banner.innerHTML = `⏳ Hạn bình chọn: <b>18:30 hôm nay (02/09)</b> — Đóng cổng sau: <span class="countdown-time">${hStr}:${mStr}:${sStr}</span>`;
             }
 
             updateClock();
@@ -672,7 +671,7 @@
 
         function resetSingleVote(category) {
             if (isVotingClosed()) {
-                alert("⛔ Cổng bình chọn đã đóng lúc 18:00, không thể thay đổi lượt vote!");
+                alert("⛔ Cổng bình chọn đã đóng lúc 18:30, không thể thay đổi lượt vote!");
                 return;
             }
 
@@ -712,7 +711,7 @@
 
         async function submitVote(category) {
             if (isVotingClosed()) {
-                alert("⛔ Cổng bình chọn đã đóng lúc 18:00 hôm nay!");
+                alert("⛔ Cổng bình chọn đã đóng lúc 18:30 hôm nay!");
                 return;
             }
 
