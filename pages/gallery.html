@@ -135,13 +135,6 @@
                     <div class="skeleton-caption shimmer"></div>
                 </div>
             </div>
-
-            <div id="loadMoreWrap" style="text-align: center; margin: 30px 0; display: none;">
-                <button id="loadMoreBtn" class="action-btn" onclick="handleLoadMore()"
-                    style="padding: 12px 28px; font-size: 1rem; cursor: pointer;">
-                    📥 Xem thêm khoảnh khắc
-                </button>
-            </div>
         </section>
 
         <a href="https://forms.gle/Zti5JjRxk8KxdCaSA" target="_blank" rel="noopener" class="floating-upload-btn"
@@ -185,8 +178,6 @@
 
         let allApprovedPosts = [];
         let filteredPosts = [];
-        let currentPage = 1;
-        const POSTS_PER_PAGE = 6;
         let currentFilter = "all";
 
         function getRandomAvatar(name) {
@@ -405,7 +396,6 @@
                 });
             }
 
-            currentPage = 1;
             renderGallery();
         }
 
@@ -417,14 +407,11 @@
 
             if (filteredPosts.length === 0) {
                 postsContainer.innerHTML = `<p class="text-center" style="width:100%; color:#fff;">Chưa có bài viết nào ở danh mục này.</p>`;
-                document.getElementById("loadMoreWrap").style.display = "none";
                 return;
             }
 
-            const visiblePosts = filteredPosts.slice(0, currentPage * POSTS_PER_PAGE);
-
             let htmlContent = "";
-            visiblePosts.forEach((post, idx) => {
+            filteredPosts.forEach((post, idx) => {
                 const postId = post.id || `post-${idx}`;
                 const isLiked = likedPosts.includes(postId);
                 const dateInfo = parsePostDate(post.time);
@@ -490,23 +477,6 @@
 
             initSliders();
             initDoubleTapToLike();
-            updateLoadMoreBtn();
-        }
-
-        function updateLoadMoreBtn() {
-            const loadMoreWrap = document.getElementById("loadMoreWrap");
-            if (!loadMoreWrap) return;
-
-            if (currentPage * POSTS_PER_PAGE >= filteredPosts.length) {
-                loadMoreWrap.style.display = "none";
-            } else {
-                loadMoreWrap.style.display = "block";
-            }
-        }
-
-        function handleLoadMore() {
-            currentPage++;
-            renderGallery();
         }
 
         function initDoubleTapToLike() {
