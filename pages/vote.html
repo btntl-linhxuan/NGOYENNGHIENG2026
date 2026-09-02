@@ -431,74 +431,76 @@
                 toggle.textContent = menu.classList.contains("show") ? "✕" : "☰";
             });
         }
-
+    
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHoTwNctLvhXDetSctwuJzcY922QOIvzTuxRYkqIf2pTwkb3kUALNsROaykI3iFv66fA/exec";
         let localVotes = JSON.parse(localStorage.getItem("camp_votes") || "{}");
         let availableMembers = [];
-
-        // 1. Cập nhật hạn chót: 18:30:00 ngày 02/09/2026
+    
+        // Hạn chót: 18:30:00 ngày 02/09/2026
         const VOTE_DEADLINE = new Date("2026-09-02T18:30:00+07:00");
-
+    
         function isVotingClosed() {
             return new Date() >= VOTE_DEADLINE;
         }
-
+    
         // Đồng hồ đếm ngược thời gian thực
         function startCountdownTimer() {
             const banner = document.getElementById("deadlineBanner");
-
+    
             function updateClock() {
                 const now = new Date();
                 const diff = VOTE_DEADLINE - now;
-
+    
                 if (diff <= 0) {
                     banner.style.background = "#d32f2f";
                     banner.style.color = "#fff";
                     banner.innerHTML = "⛔ CỔNG BÌNH CHỌN ĐÃ ĐÓNG LÚC 18:30 HÔM NAY (02/09)!";
-
+    
                     document.querySelectorAll(".btn-vote").forEach(btn => {
                         btn.disabled = true;
                         btn.textContent = "🔒 Đã Đóng Vote";
                     });
                     document.querySelectorAll(".btn-reset-cat").forEach(btn => btn.style.display = "none");
                     document.querySelectorAll(".member-input").forEach(input => input.disabled = true);
+                    
+                    // Cập nhật lại khung Top 3 sang thông báo bế mạc ngay khi hết giờ
+                    loadTopVotes();
                     return;
                 }
-
+    
                 const hours = Math.floor(diff / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
+    
                 const hStr = String(hours).padStart(2, '0');
                 const mStr = String(minutes).padStart(2, '0');
                 const sStr = String(seconds).padStart(2, '0');
-
+    
                 banner.innerHTML = `⏳ Hạn bình chọn: <b>18:30 hôm nay (02/09)</b> — Đóng cổng sau: <span class="countdown-time">${hStr}:${mStr}:${sStr}</span>`;
             }
-
+    
             updateClock();
             setInterval(updateClock, 1000);
         }
-
+    
         function getSavedVoterName() {
             return localStorage.getItem("camp_user_name") ||
                 localStorage.getItem("user_name") ||
                 localStorage.getItem("userName") ||
                 localStorage.getItem("voter_name") || "";
         }
-
+    
         function cleanName(str) {
             return String(str || "")
                 .replace(/\s*[\(\[\{-]?\s*(BĐH|BDH)\s*[\)\]\}]?/gi, '')
                 .replace(/\s+/g, ' ')
                 .trim();
         }
-
+    
         function normalizeName(str) {
             return cleanName(str).toLowerCase().normalize("NFC");
         }
-
-        // Hàm xóa dấu tiếng Việt hỗ trợ tìm kiếm không dấu
+    
         function removeAccents(str) {
             return String(str || "")
                 .normalize("NFD")
@@ -508,28 +510,28 @@
                 .toLowerCase()
                 .trim();
         }
-
+    
         function renderDatalist(filterQuery = "") {
             const datalist = document.getElementById("membersDatalist");
             datalist.innerHTML = "";
-
+    
             const cleanQuery = removeAccents(filterQuery);
             const filtered = availableMembers.filter(name =>
                 cleanQuery === "" || removeAccents(name).includes(cleanQuery)
             );
-
+    
             filtered.forEach(name => {
                 const opt = document.createElement("option");
                 opt.value = name;
                 datalist.appendChild(opt);
             });
         }
-
+    
         function initVoterInfo() {
             const voterName = getSavedVoterName();
             const displayElem = document.getElementById("voterNameDisplay");
             const noteElem = document.getElementById("voterNote");
-
+    
             if (voterName) {
                 displayElem.textContent = voterName;
             } else {
@@ -538,15 +540,15 @@
                 noteElem.textContent = "⚠️ Không tìm thấy tên của bạn từ trang chủ. Vui lòng quay lại Trang chủ để chọn/nhập tên!";
             }
         }
-
+    
         async function loadNominees() {
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=groups`);
                 const data = await res.json();
-
+    
                 const currentVoterNorm = normalizeName(getSavedVoterName());
                 let allMembers = [];
-
+    
                 if (Array.isArray(data)) {
                     data.forEach(item => {
                         if (typeof item === "string") {
@@ -560,11 +562,11 @@
                         if (item.subLeader) allMembers.push(cleanName(item.subLeader));
                     });
                 }
-
+    
                 availableMembers = [...new Set(allMembers)]
                     .filter(n => n.length > 0 && normalizeName(n) !== currentVoterNorm)
                     .sort();
-
+    
                 renderDatalist();
                 setupSearchInputListeners();
                 restoreUserVotes();
@@ -574,8 +576,7 @@
                 console.error("Lỗi tải danh sách trại sinh:", err);
             }
         }
-
-        // Cập nhật datalist khi người dùng gõ tìm kiếm không dấu
+    
         function setupSearchInputListeners() {
             document.querySelectorAll(".member-input").forEach(input => {
                 input.addEventListener("input", function () {
@@ -583,22 +584,36 @@
                 });
             });
         }
-
+    
         async function loadTopVotes() {
+            // NẾU ĐÃ HẾT GIỜ (TỪ 18:30 TRỞ ĐI): Hiển thị thông báo bảo mật kết quả
+            if (isVotingClosed()) {
+                document.querySelectorAll(".top-voted-badge").forEach(topBox => {
+                    topBox.innerHTML = `
+                        <div class="top-title">🏆 KẾT QUẢ BÌNH CHỌN</div>
+                        <div style="font-size: 0.88rem; color: #e65100; font-weight: 700; padding: 4px 0;">
+                            🎉 Kết quả sẽ được công bố vào buổi BẾ MẠC!
+                        </div>
+                    `;
+                });
+                return;
+            }
+    
+            // NẾU CHƯA HẾT GIỜ: Tải và hiển thị Top 3 bình thường
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=get_top_votes`);
                 const result = await res.json();
-
+    
                 if (result.status === "success" && result.data) {
                     const rankLabels = ["🥇 TOP 1", "🥈 TOP 2", "🥉 TOP 3"];
-
+    
                     for (let cat in result.data) {
                         const topBox = document.getElementById(`top_${cat}`);
                         if (!topBox) continue;
-
+    
                         let rawData = result.data[cat];
                         let list = [];
-
+    
                         if (Array.isArray(rawData)) {
                             list = rawData;
                         } else if (rawData && Array.isArray(rawData.top3)) {
@@ -611,9 +626,9 @@
                         } else if (rawData && rawData.topCandidate) {
                             list = [{ candidate: rawData.topCandidate, votes: rawData.votes }];
                         }
-
+    
                         const top3 = list.filter(item => (item.votes || item.count || 0) > 0).slice(0, 3);
-
+    
                         if (top3.length === 0) {
                             topBox.innerHTML = `
                                 <div class="top-title">🔥 Top 3 Dẫn Đầu</div>
@@ -640,26 +655,26 @@
                 console.error("Lỗi tải danh sách dẫn đầu:", err);
             }
         }
-
+    
         function restoreUserVotes() {
             initVoterInfo();
-
+    
             for (let category in localVotes) {
                 const card = document.querySelector(`.vote-card[data-category="${category}"]`);
                 if (card) {
                     const input = card.querySelector(".member-input");
                     const btn = card.querySelector(".btn-vote");
-
+    
                     if (input) {
                         input.value = localVotes[category];
                         input.disabled = true;
                     }
-
+    
                     if (btn) {
                         btn.disabled = true;
                         btn.textContent = "🔒 Đã Bình Chọn";
                     }
-
+    
                     const status = document.getElementById(`status_${category}`);
                     if (status) {
                         status.style.display = "inline-block";
@@ -668,39 +683,39 @@
                 }
             }
         }
-
+    
         function resetSingleVote(category) {
             if (isVotingClosed()) {
                 alert("⛔ Cổng bình chọn đã đóng lúc 18:30, không thể thay đổi lượt vote!");
                 return;
             }
-
+    
             if (!localVotes[category]) {
                 alert("Mục này bạn chưa chọn nên không cần xoá!");
                 return;
             }
-
+    
             if (confirm(`Bạn có muốn chọn lại cho mục "${category}"? Lượt vote cũ sẽ bị xoá và cập nhật mới.`)) {
                 delete localVotes[category];
                 localStorage.setItem("camp_votes", JSON.stringify(localVotes));
-
+    
                 const card = document.querySelector(`.vote-card[data-category="${category}"]`);
                 if (card) {
                     const input = card.querySelector(".member-input");
                     const btn = card.querySelector(".btn-vote");
                     const status = document.getElementById(`status_${category}`);
-
+    
                     if (input) {
                         input.value = "";
                         input.disabled = false;
                         input.focus();
                     }
-
+    
                     if (btn) {
                         btn.disabled = false;
                         btn.textContent = "🗳️ Bình Chọn";
                     }
-
+    
                     if (status) {
                         status.style.display = "none";
                         status.textContent = "";
@@ -708,57 +723,56 @@
                 }
             }
         }
-
+    
         async function submitVote(category) {
             if (isVotingClosed()) {
                 alert("⛔ Cổng bình chọn đã đóng lúc 18:30 hôm nay!");
                 return;
             }
-
+    
             const voterName = getSavedVoterName();
             if (!voterName) {
                 alert("⚠️ Không tìm thấy tên người bình chọn! Vui lòng quay lại Trang chủ để chọn hoặc nhập tên trước khi vote.");
                 return;
             }
-
+    
             const card = document.querySelector(`.vote-card[data-category="${category}"]`);
             const input = card.querySelector(".member-input");
             const btn = card.querySelector(".btn-vote");
             const targetValue = cleanName(input.value);
-
+    
             if (!targetValue) {
                 alert("⚠️ Vui lòng nhập hoặc chọn 1 ứng viên!");
                 return;
             }
-
-            // Hỗ trợ tìm khớp tên dù người dùng nhập có dấu hay không có dấu
+    
             const matchName = availableMembers.find(m =>
                 removeAccents(m) === removeAccents(targetValue) ||
                 normalizeName(m) === normalizeName(targetValue)
             );
-
+    
             if (!matchName) {
                 alert("⚠️ Tên ứng viên không đúng hoặc không có trong danh sách trại sinh!");
                 return;
             }
-
+    
             if (normalizeName(voterName) === normalizeName(matchName)) {
                 alert("⚠️ Bạn không thể tự bình chọn cho chính bản thân mình!");
                 return;
             }
-
+    
             localVotes[category] = matchName;
             localStorage.setItem("camp_votes", JSON.stringify(localVotes));
-
+    
             input.value = matchName;
             input.disabled = true;
             btn.disabled = true;
             btn.textContent = "🔒 Đã Bình Chọn";
-
+    
             const status = document.getElementById(`status_${category}`);
             status.style.display = "inline-block";
             status.textContent = "⌛ Đang ghi nhận vote...";
-
+    
             try {
                 const response = await fetch(SCRIPT_URL, {
                     method: "POST",
@@ -769,13 +783,13 @@
                         target: matchName
                     })
                 });
-
+    
                 const resData = await response.json();
                 if (resData.status === "error") {
                     alert(resData.message);
                     return;
                 }
-
+    
                 status.textContent = `✅ Đã chọn: ${matchName}`;
                 alert("🎉 Đã lưu lượt bình chọn thành công!");
                 loadTopVotes();
@@ -783,7 +797,7 @@
                 status.textContent = `✅ Đã chọn: ${matchName}`;
             }
         }
-
+    
         document.addEventListener("DOMContentLoaded", loadNominees);
     </script>
     <script src="../tracker.js"></script>
